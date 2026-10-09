@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-ink: #08090B;
+  --color-porcelain: #F7F7F3;
+  --color-powder: #D9ECF8;
+  --color-sky: #8ECCFF;
+  --color-lime: #C8F85A;
+  --color-slate-muted: #68717D;
+  --color-mist: #DDE3E8;
+  --color-success: #16865B;
+  --color-amber-warning: #D58A13;
+  --color-error: #D43D3D;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@layer base {
+  :root {
+    --ink: #08090B;
+    --porcelain: #F7F7F3;
+    --powder: #D9ECF8;
+    --sky: #8ECCFF;
+    --lime: #C8F85A;
+    --slate-muted: #68717D;
+    --mist: #DDE3E8;
+    --success: #16865B;
+    --amber-warning: #D58A13;
+    --error: #D43D3D;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--porcelain);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    background-color: #08090B;
+    color: #F7F7F3;
+  }
+}
+
+/* Custom Typography Utilities from Section 02 */
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-ui {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Color Tokens according to 01. COLOR PALETTE */
+.bg-porcelain { background-color: #F7F7F3; }
+.bg-ink { background-color: #08090B; }
+.bg-powder { background-color: #D9ECF8; }
+.bg-sky { background-color: #8ECCFF; }
+.bg-lime { background-color: #C8F85A; }
+.bg-slate-muted { background-color: #68717D; }
+.bg-mist { background-color: #DDE3E8; }
+.border-mist { border-color: #DDE3E8; }
+.text-ink { color: #08090B; }
+.text-slate-muted { color: #68717D; }
+
+/* The Signature Gradient Mesh Card from UI Reference */
+.gradient-accent-card {
+  background: linear-gradient(135deg, #8ECCFF 0%, #a4e5c8 45%, #C8F85A 100%);
+}
+
+.dark .gradient-accent-card {
+  background: linear-gradient(135deg, rgba(142, 204, 255, 0.85) 0%, rgba(100, 200, 160, 0.85) 45%, rgba(200, 248, 90, 0.85) 100%);
+}
+
+/* Print Stylesheet */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  header, footer, nav, button, .print\:hidden, .demo-bar {
+    display: none !important;
+  }
+  #printable-date-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+}

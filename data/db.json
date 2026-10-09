@@ -1,0 +1,798 @@
+{
+  "users": [
+    {
+      "id": "user-admin-1",
+      "email": "admin@examslot.edu",
+      "passwordHash": "$2b$10$9YPec/zkuiEjavqhLLyFJ.ZT6enkLrrYI8ZXJT7u6f3kB9frddpu6",
+      "role": "ADMIN",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "user-stu-1",
+      "email": "ali.khan@student.examslot.edu",
+      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "user-stu-2",
+      "email": "fatima.noor@student.examslot.edu",
+      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "user-stu-3",
+      "email": "bilal.ahmed@student.examslot.edu",
+      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "user-stu-4",
+      "email": "zainab.tariq@student.examslot.edu",
+      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "user-stu-5",
+      "email": "hamza.malik@student.examslot.edu",
+      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    }
+  ],
+  "passwordTokens": [
+    {
+      "id": "token-1",
+      "userId": "user-stu-1",
+      "email": "ali.khan@student.examslot.edu",
+      "token": "demo-token-ali-khan-1",
+      "expiresAt": "2026-10-10T07:03:51.030Z",
+      "isUsed": false,
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    }
+  ],
+  "branches": [
+    {
+      "id": "br-lahore-1",
+      "code": "LHR-01",
+      "name": "Lahore Central Campus",
+      "city": "Lahore",
+      "address": "Plot 54, Block C, Canal Bank Road, Lahore",
+      "contactNumber": "+92-42-111-887-887",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "br-islamabad-2",
+      "code": "ISB-02",
+      "name": "Islamabad Capital Campus",
+      "city": "Islamabad",
+      "address": "Sector H-9/1, Kashmir Highway, Islamabad",
+      "contactNumber": "+92-51-111-887-888",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "br-karachi-3",
+      "code": "KHI-03",
+      "name": "Karachi City Campus",
+      "city": "Karachi",
+      "address": "Gulshan-e-Iqbal Block 7, Main University Road, Karachi",
+      "contactNumber": "+92-21-111-887-889",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "br-peshawar-4",
+      "code": "PEW-04",
+      "name": "Peshawar Valley Campus",
+      "city": "Peshawar",
+      "address": "University Road, Near Board of Intermediate, Peshawar",
+      "contactNumber": "+92-91-111-887-890",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    }
+  ],
+  "courses": [
+    {
+      "id": "crs-cs101",
+      "code": "CS101",
+      "title": "Introduction to Computing & Algorithms",
+      "creditHours": 3,
+      "department": "Computer Science",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-cs201",
+      "code": "CS201",
+      "title": "Object-Oriented Programming (C++ & Java)",
+      "creditHours": 4,
+      "department": "Computer Science",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-cs301",
+      "code": "CS301",
+      "title": "Data Structures and Algorithms",
+      "creditHours": 3,
+      "department": "Computer Science",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-cs304",
+      "code": "CS304",
+      "title": "Database Management Systems",
+      "creditHours": 3,
+      "department": "Software Engineering",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-mth101",
+      "code": "MTH101",
+      "title": "Calculus and Analytical Geometry",
+      "creditHours": 3,
+      "department": "Mathematics",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-phy101",
+      "code": "PHY101",
+      "title": "Applied Physics & Electromagnetism",
+      "creditHours": 3,
+      "department": "Basic Sciences",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-eng101",
+      "code": "ENG101",
+      "title": "English Comprehension & Technical Writing",
+      "creditHours": 3,
+      "department": "Humanities",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    },
+    {
+      "id": "crs-mgt201",
+      "code": "MGT201",
+      "title": "Financial Accounting & Management",
+      "creditHours": 3,
+      "department": "Management Sciences",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-09T07:03:51.029Z",
+      "updatedAt": "2026-10-09T07:03:51.029Z"
+    }
+  ],
+  "students": [
+    {
+      "id": "stu-1",
+      "userId": "user-stu-1",
+      "fullName": "Ali Khan",
+      "email": "ali.khan@student.examslot.edu",
+      "phone": "+92-300-1234567",
+      "cnic": "35202-1234567-1",
+      "dob": "2003-05-14",
+      "gender": "Male",
+      "address": "House 12, Street 4, Model Town, Lahore",
+      "fatherName": "Muhammad Tariq Khan",
+      "parentCnic": "35202-9876543-1",
+      "parentOccupation": "Senior Civil Engineer",
+      "parentPhone": "+92-321-9876543",
+      "emergencyContact": "+92-42-35889900",
+      "regNumber": "BC210401890",
+      "program": "BS Computer Science",
+      "semester": 4,
+      "sessionBatch": "Fall 2024",
+      "prevQual": "HSSC / FSc Pre-Engineering",
+      "prevInstitute": "Punjab Group of Colleges, Lahore",
+      "cgpa": 3.72,
+      "branchId": "br-lahore-1",
+      "branchName": "Lahore Central Campus",
+      "isBranchSelected": true,
+      "isDateSheetSaved": false,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [
+        "crs-cs101",
+        "crs-cs201",
+        "crs-cs301",
+        "crs-cs304",
+        "crs-mth101"
+      ],
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "stu-2",
+      "userId": "user-stu-2",
+      "fullName": "Fatima Noor",
+      "email": "fatima.noor@student.examslot.edu",
+      "phone": "+92-333-5556677",
+      "cnic": "37405-7654321-2",
+      "dob": "2004-01-20",
+      "gender": "Female",
+      "address": "Apartment 4B, Silver Oak, F-10/2, Islamabad",
+      "fatherName": "Dr. Noor Muhammad",
+      "parentCnic": "37405-1122334-3",
+      "parentOccupation": "Medical Specialist",
+      "parentPhone": "+92-333-9998877",
+      "emergencyContact": "+92-51-2299880",
+      "regNumber": "BC210402011",
+      "program": "BS Software Engineering",
+      "semester": 3,
+      "sessionBatch": "Spring 2024",
+      "prevQual": "A-Levels (Sciences)",
+      "prevInstitute": "Beaconhouse Margalla Campus, Islamabad",
+      "cgpa": 3.88,
+      "branchId": "br-islamabad-2",
+      "branchName": "Islamabad Capital Campus",
+      "isBranchSelected": true,
+      "isDateSheetSaved": true,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [
+        "crs-cs101",
+        "crs-cs201",
+        "crs-cs304",
+        "crs-eng101"
+      ],
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "stu-3",
+      "userId": "user-stu-3",
+      "fullName": "Bilal Ahmed",
+      "email": "bilal.ahmed@student.examslot.edu",
+      "phone": "+92-345-4433221",
+      "cnic": "42101-5566778-9",
+      "dob": "2002-11-08",
+      "gender": "Male",
+      "address": "B-14, Darakhshan Villas, DHA Phase 6, Karachi",
+      "fatherName": "Ahmed Raza",
+      "parentCnic": "42101-3322110-1",
+      "parentOccupation": "Chartered Accountant",
+      "parentPhone": "+92-345-9988776",
+      "emergencyContact": "+92-21-35841234",
+      "regNumber": "BC210403155",
+      "program": "BS Information Technology",
+      "semester": 5,
+      "sessionBatch": "Fall 2023",
+      "prevQual": "FSc Pre-Engineering",
+      "prevInstitute": "Adamjee Govt Science College, Karachi",
+      "cgpa": 3.45,
+      "branchId": null,
+      "isBranchSelected": false,
+      "isDateSheetSaved": false,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [
+        "crs-cs101",
+        "crs-cs201",
+        "crs-cs301",
+        "crs-mth101",
+        "crs-phy101"
+      ],
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "stu-4",
+      "userId": "user-stu-4",
+      "fullName": "Zainab Tariq",
+      "email": "zainab.tariq@student.examslot.edu",
+      "phone": "+92-312-7788990",
+      "cnic": "35201-9988776-4",
+      "dob": "2003-08-30",
+      "gender": "Female",
+      "address": "House 77, Street 19, Cavalry Ground, Lahore",
+      "fatherName": "Tariq Mehmood",
+      "parentCnic": "35201-5544332-1",
+      "parentOccupation": "Business Owner",
+      "parentPhone": "+92-312-3322114",
+      "emergencyContact": "+92-42-36655443",
+      "regNumber": "BC210404882",
+      "program": "BS Computer Science",
+      "semester": 2,
+      "sessionBatch": "Spring 2025",
+      "prevQual": "ICS (Physics, Math, CS)",
+      "prevInstitute": "Kinnaird College for Women, Lahore",
+      "cgpa": 3.65,
+      "branchId": "br-lahore-1",
+      "branchName": "Lahore Central Campus",
+      "isBranchSelected": true,
+      "isDateSheetSaved": false,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [
+        "crs-cs101",
+        "crs-mth101"
+      ],
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "stu-5",
+      "userId": "user-stu-5",
+      "fullName": "Hamza Malik",
+      "email": "hamza.malik@student.examslot.edu",
+      "phone": "+92-301-8899001",
+      "cnic": "17301-3344556-7",
+      "dob": "2003-03-25",
+      "gender": "Male",
+      "address": "House 10, Sector F, Hayatabad, Peshawar",
+      "fatherName": "Malik Jahangir",
+      "parentCnic": "17301-8877665-9",
+      "parentOccupation": "Government Officer",
+      "parentPhone": "+92-301-2233445",
+      "emergencyContact": "+92-91-5823456",
+      "regNumber": "BC210405991",
+      "program": "BS Software Engineering",
+      "semester": 4,
+      "sessionBatch": "Fall 2024",
+      "prevQual": "FSc Pre-Engineering",
+      "prevInstitute": "Islamia College, Peshawar",
+      "cgpa": 3.52,
+      "branchId": "br-peshawar-4",
+      "branchName": "Peshawar Valley Campus",
+      "isBranchSelected": true,
+      "isDateSheetSaved": true,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [
+        "crs-cs101",
+        "crs-cs201",
+        "crs-cs301",
+        "crs-mth101",
+        "crs-eng101"
+      ],
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    }
+  ],
+  "slots": [
+    {
+      "id": "slot-cs101-m1",
+      "courseId": "crs-cs101",
+      "courseCode": "CS101",
+      "courseTitle": "Introduction to Computing & Algorithms",
+      "examDate": "2026-11-10",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs101-a1",
+      "courseId": "crs-cs101",
+      "courseCode": "CS101",
+      "courseTitle": "Introduction to Computing & Algorithms",
+      "examDate": "2026-11-10",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs101-m2",
+      "courseId": "crs-cs101",
+      "courseCode": "CS101",
+      "courseTitle": "Introduction to Computing & Algorithms",
+      "examDate": "2026-11-14",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs201-m1",
+      "courseId": "crs-cs201",
+      "courseCode": "CS201",
+      "courseTitle": "Object-Oriented Programming (C++ & Java)",
+      "examDate": "2026-11-12",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs201-a1",
+      "courseId": "crs-cs201",
+      "courseCode": "CS201",
+      "courseTitle": "Object-Oriented Programming (C++ & Java)",
+      "examDate": "2026-11-12",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs201-m2",
+      "courseId": "crs-cs201",
+      "courseCode": "CS201",
+      "courseTitle": "Object-Oriented Programming (C++ & Java)",
+      "examDate": "2026-11-16",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs301-m1",
+      "courseId": "crs-cs301",
+      "courseCode": "CS301",
+      "courseTitle": "Data Structures and Algorithms",
+      "examDate": "2026-11-14",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs301-a1",
+      "courseId": "crs-cs301",
+      "courseCode": "CS301",
+      "courseTitle": "Data Structures and Algorithms",
+      "examDate": "2026-11-14",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs301-m2",
+      "courseId": "crs-cs301",
+      "courseCode": "CS301",
+      "courseTitle": "Data Structures and Algorithms",
+      "examDate": "2026-11-18",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs304-m1",
+      "courseId": "crs-cs304",
+      "courseCode": "CS304",
+      "courseTitle": "Database Management Systems",
+      "examDate": "2026-11-16",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs304-a1",
+      "courseId": "crs-cs304",
+      "courseCode": "CS304",
+      "courseTitle": "Database Management Systems",
+      "examDate": "2026-11-16",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-cs304-m2",
+      "courseId": "crs-cs304",
+      "courseCode": "CS304",
+      "courseTitle": "Database Management Systems",
+      "examDate": "2026-11-20",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-mth101-m1",
+      "courseId": "crs-mth101",
+      "courseCode": "MTH101",
+      "courseTitle": "Calculus and Analytical Geometry",
+      "examDate": "2026-11-18",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-mth101-a1",
+      "courseId": "crs-mth101",
+      "courseCode": "MTH101",
+      "courseTitle": "Calculus and Analytical Geometry",
+      "examDate": "2026-11-18",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-mth101-m2",
+      "courseId": "crs-mth101",
+      "courseCode": "MTH101",
+      "courseTitle": "Calculus and Analytical Geometry",
+      "examDate": "2026-11-22",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-phy101-m1",
+      "courseId": "crs-phy101",
+      "courseCode": "PHY101",
+      "courseTitle": "Applied Physics & Electromagnetism",
+      "examDate": "2026-11-20",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-phy101-a1",
+      "courseId": "crs-phy101",
+      "courseCode": "PHY101",
+      "courseTitle": "Applied Physics & Electromagnetism",
+      "examDate": "2026-11-20",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-phy101-m2",
+      "courseId": "crs-phy101",
+      "courseCode": "PHY101",
+      "courseTitle": "Applied Physics & Electromagnetism",
+      "examDate": "2026-11-24",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-eng101-m1",
+      "courseId": "crs-eng101",
+      "courseCode": "ENG101",
+      "courseTitle": "English Comprehension & Technical Writing",
+      "examDate": "2026-11-22",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-eng101-a1",
+      "courseId": "crs-eng101",
+      "courseCode": "ENG101",
+      "courseTitle": "English Comprehension & Technical Writing",
+      "examDate": "2026-11-22",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-eng101-m2",
+      "courseId": "crs-eng101",
+      "courseCode": "ENG101",
+      "courseTitle": "English Comprehension & Technical Writing",
+      "examDate": "2026-11-10",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-mgt201-m1",
+      "courseId": "crs-mgt201",
+      "courseCode": "MGT201",
+      "courseTitle": "Financial Accounting & Management",
+      "examDate": "2026-11-24",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-mgt201-a1",
+      "courseId": "crs-mgt201",
+      "courseCode": "MGT201",
+      "courseTitle": "Financial Accounting & Management",
+      "examDate": "2026-11-24",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "capacity": 30,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "slot-mgt201-m2",
+      "courseId": "crs-mgt201",
+      "courseCode": "MGT201",
+      "courseTitle": "Financial Accounting & Management",
+      "examDate": "2026-11-12",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "capacity": 25,
+      "createdAt": "2026-10-09T07:03:51.030Z",
+      "updatedAt": "2026-10-09T07:03:51.030Z"
+    }
+  ],
+  "selections": [
+    {
+      "id": "sel-fn-1",
+      "studentId": "stu-2",
+      "courseId": "crs-cs101",
+      "slotId": "slot-cs101-m1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-fn-2",
+      "studentId": "stu-2",
+      "courseId": "crs-cs201",
+      "slotId": "slot-cs201-a1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-fn-3",
+      "studentId": "stu-2",
+      "courseId": "crs-cs304",
+      "slotId": "slot-cs304-m1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-fn-4",
+      "studentId": "stu-2",
+      "courseId": "crs-eng101",
+      "slotId": "slot-eng101-m1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-hm-1",
+      "studentId": "stu-5",
+      "courseId": "crs-cs101",
+      "slotId": "slot-cs101-m2",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-hm-2",
+      "studentId": "stu-5",
+      "courseId": "crs-cs201",
+      "slotId": "slot-cs201-m1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-hm-3",
+      "studentId": "stu-5",
+      "courseId": "crs-cs301",
+      "slotId": "slot-cs301-m1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-hm-4",
+      "studentId": "stu-5",
+      "courseId": "crs-mth101",
+      "slotId": "slot-mth101-m1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-hm-5",
+      "studentId": "stu-5",
+      "courseId": "crs-eng101",
+      "slotId": "slot-eng101-a1",
+      "createdAt": "2026-10-09T07:03:51.030Z"
+    }
+  ],
+  "requests": [
+    {
+      "id": "req-1",
+      "studentId": "stu-5",
+      "studentName": "Hamza Malik",
+      "studentEmail": "hamza.malik@student.examslot.edu",
+      "regNumber": "BC210405991",
+      "requestType": "CHANGE_DATESHEET",
+      "reason": "Have an overlapping family medical emergency on Nov 10; need to reschedule CS101 slot to morning shift.",
+      "status": "PENDING",
+      "dateRaised": "2026-10-09T02:03:51.030Z"
+    },
+    {
+      "id": "req-2",
+      "studentId": "stu-2",
+      "studentName": "Fatima Noor",
+      "studentEmail": "fatima.noor@student.examslot.edu",
+      "regNumber": "BC210402011",
+      "requestType": "CHANGE_BRANCH",
+      "reason": "Relocating to Lahore for family wedding during exam weeks.",
+      "status": "APPROVED",
+      "adminRemark": "Approved per university inter-campus transfer policy for exam sitting.",
+      "dateRaised": "2026-10-07T07:03:51.030Z",
+      "resolvedAt": "2026-10-08T07:03:51.030Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "audit-1",
+      "adminEmail": "admin@examslot.edu",
+      "action": "SYSTEM_SEED",
+      "target": "SYSTEM",
+      "details": "System initialized with seed branches, courses, and students.",
+      "timestamp": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "audit-2",
+      "adminEmail": "admin@examslot.edu",
+      "action": "APPROVE_REQUEST",
+      "target": "Fatima Noor (BC210402011)",
+      "details": "Approved branch change request with remark: Approved per university inter-campus transfer policy.",
+      "timestamp": "2026-10-08T07:03:51.030Z"
+    }
+  ],
+  "emails": [
+    {
+      "id": "email-welcome-1",
+      "to": "ali.khan@student.examslot.edu",
+      "subject": "Welcome to ExamSlot Portal - Account Setup",
+      "body": "Your student portal account has been created for Spring 2026 examination sitting. Please set your password using the link below.",
+      "link": "/set-password?token=demo-token-ali-khan-1",
+      "type": "PASSWORD_SETUP",
+      "timestamp": "2026-10-09T07:03:51.030Z",
+      "read": false
+    },
+    {
+      "id": "email-req-approved",
+      "to": "fatima.noor@student.examslot.edu",
+      "subject": "Change Request Approved - ExamSlot Portal",
+      "body": "Your request for CHANGE_BRANCH has been approved by the examination controller. You may now re-select your preferred examination branch.",
+      "type": "REQUEST_APPROVED",
+      "timestamp": "2026-10-08T07:03:51.030Z",
+      "read": true
+    }
+  ]
+}
