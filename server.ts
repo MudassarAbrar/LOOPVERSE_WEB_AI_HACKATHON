@@ -1790,11 +1790,17 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`ExamSlot server running on http://localhost:${PORT}`);
+  if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+      console.log(`ExamSlot server running on http://localhost:${PORT}`);
+    });
+  }
+}
+
+if (process.env.VERCEL !== '1') {
+  startServer().catch(err => {
+    console.error('Failed to start server:', err);
   });
 }
 
-startServer().catch(err => {
-  console.error('Failed to start server:', err);
-});
+export default app;
