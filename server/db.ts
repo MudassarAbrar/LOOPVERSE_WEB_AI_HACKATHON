@@ -652,15 +652,17 @@ export function getDb(): DatabaseSchema {
 
 // Asynchronously sync mutations to Supabase in background
 export function syncRecordToSupabase(table: string, record: any): void {
-  supabaseAdmin.from(table).upsert(record).then(({ error }) => {
-    if (error) {
-      console.warn(`[SUPABASE ASYNC SYNC WARNING] Failed to sync ${table}:`, error.message);
-    } else {
-      console.log(`[SUPABASE ASYNC SYNC SUCCESS] Synced ${table} record`);
-    }
-  }).catch(err => {
-    console.warn(`[SUPABASE ASYNC SYNC ERROR] ${table}:`, err);
-  });
+  Promise.resolve(supabaseAdmin.from(table).upsert(record))
+    .then((res: any) => {
+      if (res.error) {
+        console.warn(`[SUPABASE ASYNC SYNC WARNING] Failed to sync ${table}:`, res.error.message);
+      } else {
+        console.log(`[SUPABASE ASYNC SYNC SUCCESS] Synced ${table} record`);
+      }
+    })
+    .catch((err: any) => {
+      console.warn(`[SUPABASE ASYNC SYNC ERROR] ${table}:`, err);
+    });
 }
 
 // Audit Logger Helper (Bonus Feature)

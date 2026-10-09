@@ -23,6 +23,9 @@ import {
   ChangeRequest,
   StudentSlotSelection
 } from './src/types/index.ts';
+import { GoogleGenAI } from '@google/genai';
+import { examSlotTools } from './server/aiTools.ts';
+import { executeAiTool } from './server/aiToolHandlers.ts';
 
 dotenv.config();
 
@@ -1054,6 +1057,84 @@ app.get('/api/admin/audit-logs', authMiddleware, adminOnly, (req: Request, res: 
   );
 
   res.json(result);
+});
+
+// ----------------- AI CHATBOT ASSISTANT ENDPOINT (Google Gen AI SDK) -----------------
+
+app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { messages, studentId } = req.body;
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'Messages array is required.' });
+    }
+
+    const aiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    if (!aiApiKey) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in server environment.' });
+    }
+
+    const ai = new GoogleGenAI({ apiKey: aiApiKey });
+    const systemInstruction = `
+      You are the Virtual University ExamSlot AI Assistant.
+      Your goal is to provide accurate, real-time help to students about active campuses/branches, course exam slots, seat capacity, assigned courses, time conflicts, and date sheet policies.
+      CRITICAL INSTRUCTION: NEVER guess, hallucinate, or invent data. ALWAYS use the provided live database tools to query real data before answering student queries.
+    `;
+
+    // 1. Initial call to Gemini 2.0 Flash
+    const initialResponse = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: messages,
+      config: {
+        systemInstruction,
+        tools: [{ functionDeclarations: examSlotTools }],
+      },
+    });
+
+    // 2. Check if Gemini invoked a tool call
+    const functionCalls = initialResponse.functionCalls;
+
+    if (functionCalls && functionCalls.length > 0) {
+      const call = functionCalls[0];
+      const toolName = call.name || 'getAvailableBranches';
+      const toolArgs = { ...call.args, studentId };
+
+      console.log(`[AI TOOL CALL] Invoking database tool '${toolName}' with args:`, toolArgs);
+
+      // Execute live DB tool handler
+      const toolResult = await executeAiTool(toolName, toolArgs);
+
+      // 3. Send tool result back to Gemini for natural language synthesis
+      const followUpResponse = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: [
+          ...messages,
+          { role: 'model', parts: [{ functionCall: call }] },
+          {
+            role: 'user',
+            parts: [
+              {
+                functionResponse: {
+                  name: toolName,
+                  response: toolResult,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      return res.json({
+        reply: followUpResponse.text,
+        executedTool: toolName,
+        toolResult
+      });
+    }
+
+    res.json({ reply: initialResponse.text });
+  } catch (err: any) {
+    console.error('[AI CHAT ERROR]', err);
+    res.status(500).json({ error: err.message || 'Failed to process AI chat request.' });
+  }
 });
 
 // ----------------- STUDENT PANEL APIS -----------------

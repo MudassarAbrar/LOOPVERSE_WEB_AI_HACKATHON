@@ -289,5 +289,12 @@ export const api = {
 
   // Reset demo
   resetDemo: () =>
-    request<{ message: string }>('/api/demo/reset', { method: 'POST' })
+    request<{ message: string }>('/api/demo/reset', { method: 'POST' }),
+
+  // AI Chatbot Assistant (Google Gen AI SDK with Tool Calling)
+  sendChatMessage: (messages: Array<{ role: 'user' | 'model'; parts: Array<{ text?: string }> }>, studentId?: string) =>
+    request<{ reply: string; executedTool?: string; toolResult?: any }>('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({ messages, studentId })
+    })
 };
