@@ -1339,27 +1339,194 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
       }
     }
 
-    const aiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    if (!aiApiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in server environment.' });
+    const grokApiKey = process.env.GROK_API_KEY || process.env.GROQ_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+
+    if (!grokApiKey && !geminiApiKey) {
+      return res.status(500).json({ error: 'Neither GROK_API_KEY nor GEMINI_API_KEY is configured in server environment.' });
     }
 
+    const systemInstruction = `You are the Virtual University ExamSlot AI Assistant.
+Your goal is to provide accurate, real-time help to students about active campuses/branches, course exam slots, seat capacity, assigned courses, time conflicts, and date sheet policies.
+${studentInfoText}
+CRITICAL INSTRUCTION: NEVER guess, hallucinate, or invent data. ALWAYS use the provided live database tools to query real data before answering student queries. If the student asks about their courses, slots, or conflicts, call the corresponding database tool immediately.`;
+
+    // 1. Try Grok / Groq API provider if key is available
+    if (grokApiKey) {
+      try {
+        const isXAi = grokApiKey.startsWith('xai-');
+        const apiUrl = isXAi ? 'https://api.x.ai/v1/chat/completions' : 'https://api.groq.com/openai/v1/chat/completions';
+        const modelName = isXAi ? 'grok-2-latest' : 'openai/gpt-oss-120b';
+
+        const openAiMessages = [
+          { role: 'system', content: systemInstruction },
+          ...messages.map((m: any) => {
+            let roleStr = m.role === 'model' ? 'assistant' : m.role;
+            let textContent = '';
+            if (typeof m.content === 'string') {
+              textContent = m.content;
+            } else if (Array.isArray(m.parts)) {
+              textContent = m.parts.map((p: any) => p.text || '').join('\n');
+            } else if (typeof m.text === 'string') {
+              textContent = m.text;
+            }
+            return { role: roleStr, content: textContent || 'Hello' };
+          })
+        ];
+
+        const openAiTools = [
+          {
+            type: 'function',
+            function: {
+              name: 'getAvailableBranches',
+              description: 'Fetches list of active exam campuses/branches with city, address, contact details.',
+              parameters: { type: 'object', properties: {} }
+            }
+          },
+          {
+            type: 'function',
+            function: {
+              name: 'getCourseSlots',
+              description: 'Fetches all available exam dates and morning/afternoon start/end times for a course code (e.g. CS101, CS201).',
+              parameters: {
+                type: 'object',
+                properties: { courseCode: { type: 'string', description: 'Course code, e.g. CS101' } },
+                required: ['courseCode']
+              }
+            }
+          },
+          {
+            type: 'function',
+            function: {
+              name: 'checkSlotSeats',
+              description: 'Checks seat capacity, booked count, and remaining seats for an exam slot.',
+              parameters: {
+                type: 'object',
+                properties: { slotId: { type: 'string', description: 'Exam slot ID' } },
+                required: ['slotId']
+              }
+            }
+          },
+          {
+            type: 'function',
+            function: {
+              name: 'getMyAssignedCourses',
+              description: 'Fetches assigned courses for a student.',
+              parameters: {
+                type: 'object',
+                properties: { studentId: { type: 'string', description: 'Student ID' } },
+                required: ['studentId']
+              }
+            }
+          },
+          {
+            type: 'function',
+            function: {
+              name: 'checkScheduleConflicts',
+              description: 'Checks if selected slots overlap in date/time.',
+              parameters: {
+                type: 'object',
+                properties: { studentId: { type: 'string', description: 'Student ID' } },
+                required: ['studentId']
+              }
+            }
+          }
+        ];
+
+        const initialRes = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${grokApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: modelName,
+            messages: openAiMessages,
+            tools: openAiTools,
+            tool_choice: 'auto'
+          })
+        });
+
+        const data: any = await initialRes.json();
+        if (!initialRes.ok) {
+          throw new Error(data?.error?.message || data?.error || `Grok API error ${initialRes.status}`);
+        }
+
+        const choice = data.choices?.[0];
+        const responseMsg = choice?.message;
+
+        if (responseMsg?.tool_calls && responseMsg.tool_calls.length > 0) {
+          const executedTools: string[] = [];
+          const toolResults: Record<string, any> = {};
+          const toolMessages: any[] = [...openAiMessages, responseMsg];
+
+          for (const tc of responseMsg.tool_calls) {
+            const funcName = tc.function?.name;
+            if (!funcName) continue;
+
+            let parsedArgs = {};
+            try {
+              parsedArgs = JSON.parse(tc.function.arguments || '{}');
+            } catch {
+              // ignore
+            }
+
+            const toolArgs = { ...parsedArgs, studentId: targetStudentId };
+            console.log(`[GROK AI TOOL CALL] Invoking tool '${funcName}' with args:`, toolArgs);
+
+            const result = await executeAiTool(funcName, toolArgs);
+            executedTools.push(funcName);
+            toolResults[funcName] = result;
+
+            toolMessages.push({
+              role: 'tool',
+              tool_call_id: tc.id,
+              name: funcName,
+              content: JSON.stringify(result)
+            });
+          }
+
+          const followUpRes = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${grokApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: modelName,
+              messages: toolMessages
+            })
+          });
+
+          const followUpData: any = await followUpRes.json();
+          const finalReply = followUpData.choices?.[0]?.message?.content || 'Action completed successfully.';
+
+          return res.json({
+            reply: finalReply,
+            executedTool: executedTools.join(', '),
+            toolResult: toolResults
+          });
+        }
+
+        return res.json({ reply: responseMsg?.content || 'No text output.' });
+      } catch (grokErr: any) {
+        console.warn('[GROK AI ERROR - FALLING BACK TO GEMINI]', grokErr.message);
+        if (!geminiApiKey) {
+          return res.status(500).json({ error: grokErr.message || 'Grok API request failed.' });
+        }
+      }
+    }
+
+    // 2. Gemini Fallback Provider
     const MODEL_NAME = 'gemini-flash-latest';
     const FALLBACK_MODEL = 'gemini-3.1-flash-lite';
-    const ai = new GoogleGenAI({ apiKey: aiApiKey });
-    const systemInstruction = `
-      You are the Virtual University ExamSlot AI Assistant.
-      Your goal is to provide accurate, real-time help to students about active campuses/branches, course exam slots, seat capacity, assigned courses, time conflicts, and date sheet policies.
-      ${studentInfoText}
-      CRITICAL INSTRUCTION: NEVER guess, hallucinate, or invent data. ALWAYS use the provided live database tools to query real data before answering student queries. If the student asks about their courses, slots, or conflicts, call the corresponding database tool immediately.
-    `;
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey! });
 
     const generationConfig = {
       systemInstruction,
       tools: [{ functionDeclarations: examSlotTools }],
     };
 
-    // Helper to generate content with fallback model resilience
     const generateWithFallback = async (params: { contents: any[]; config: any }) => {
       try {
         return await ai.models.generateContent({
@@ -1367,7 +1534,6 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
           ...params
         });
       } catch (err: any) {
-        console.warn(`[GEMINI PRIMARY MODEL FAILED: ${MODEL_NAME}] Falling back to ${FALLBACK_MODEL}`, err?.message);
         return await ai.models.generateContent({
           model: FALLBACK_MODEL,
           ...params
@@ -1375,13 +1541,11 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
       }
     };
 
-    // 1. Initial call to Gemini
     const initialResponse = await generateWithFallback({
       contents: messages,
       config: generationConfig,
     });
 
-    // 2. Process function calls
     const functionCalls = initialResponse.functionCalls;
     const initialCandidateContent = initialResponse.candidates?.[0]?.content;
 
@@ -1395,8 +1559,6 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
         if (!name) continue;
 
         const toolArgs = { ...call.args, studentId: targetStudentId };
-        console.log(`[AI TOOL CALL] Invoking tool '${name}' with args:`, toolArgs);
-
         const result = await executeAiTool(name, toolArgs);
         executedTools.push(name);
         toolResults[name] = result;
@@ -1410,7 +1572,6 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
         });
       }
 
-      // 3. Send model turn + function responses back preserving systemInstruction and generation config
       const followUpResponse = await generateWithFallback({
         contents: [
           ...messages,
