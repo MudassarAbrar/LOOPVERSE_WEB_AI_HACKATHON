@@ -23,11 +23,15 @@ function escapeHtml(str: string): string {
 
 function sanitizeUrl(linkStr?: string): string | null {
   if (!linkStr) return null;
-  const trimmed = linkStr.trim();
-  if (trimmed.startsWith('/') || /^https?:\/\//i.test(trimmed)) {
-    return escapeHtml(trimmed);
+  let trimmed = linkStr.trim();
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://examslot-chi.vercel.app').replace(/\/$/, '');
+  
+  if (trimmed.startsWith('/')) {
+    trimmed = `${baseUrl}${trimmed}`;
+  } else if (!/^https?:\/\//i.test(trimmed)) {
+    trimmed = `${baseUrl}/${trimmed}`;
   }
-  return null;
+  return escapeHtml(trimmed);
 }
 
 export function sendEmail({
