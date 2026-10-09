@@ -22,12 +22,14 @@ export const StudentRequestsReview: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Review modal
   const [reviewingReq, setReviewingReq] = useState<ChangeRequest | null>(null);
   const [reviewAction, setReviewAction] = useState<'APPROVE' | 'REJECT'>('APPROVE');
   const [adminRemark, setAdminRemark] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [modalError, setModalError] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchRequests = async (
@@ -38,6 +40,7 @@ export const StudentRequestsReview: React.FC = () => {
   ) => {
     try {
       setLoading(true);
+      setFetchError(null);
       const res = await api.getRequests(page, pageSize, query, status, type);
       setRequests(res.data);
       setTotalItems(res.pagination.totalItems);
@@ -45,7 +48,9 @@ export const StudentRequestsReview: React.FC = () => {
       setCurrentPage(res.pagination.currentPage);
     } catch (err: any) {
       console.error(err);
-      setAlertMessage({ type: 'error', text: err.message || 'Failed to fetch student requests.' });
+      const errorMsg = err.message || 'Failed to fetch student requests.';
+      setFetchError(errorMsg);
+      setAlertMessage({ type: 'error', text: errorMsg });
     } finally {
       setLoading(false);
     }
@@ -58,6 +63,7 @@ export const StudentRequestsReview: React.FC = () => {
   const handleOpenReview = (req: ChangeRequest, action: 'APPROVE' | 'REJECT') => {
     setReviewingReq(req);
     setReviewAction(action);
+    setModalError(null);
     setAdminRemark(
       action === 'APPROVE'
         ? `Approved per examination policy. One-time unlock granted.`
@@ -67,19 +73,25 @@ export const StudentRequestsReview: React.FC = () => {
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reviewingReq) return;
+    if (!reviewingReq || submitting) return;
 
     setSubmitting(true);
+    setModalError(null);
     try {
       await api.reviewRequest(reviewingReq.id, reviewAction, adminRemark);
       setAlertMessage({
         type: 'success',
-        text: `Request by ${reviewingReq.studentName} successfully ${reviewAction.toLowerCase()}d. Email notification dispatched.`
+        text: `Request by ${reviewingReq.studentName} successfully ${reviewAction.toLowerCase()}d. One-time unlock confirmed & email notification dispatched.`
       });
       setReviewingReq(null);
-      fetchRequests(currentPage, search, statusFilter, typeFilter);
+      await fetchRequests(currentPage, search, statusFilter, typeFilter);
     } catch (err: any) {
-      setAlertMessage({ type: 'error', text: err.message || 'Failed to review request.' });
+      const msg = err.message || 'Failed to review request.';
+      if (msg.toLowerCase().includes('session expired') || msg.toLowerCase().includes('unauthorized') || msg.toLowerCase().includes('log in')) {
+        setModalError('Session expired - Log in again.');
+      } else {
+        setModalError(msg);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -180,6 +192,20 @@ export const StudentRequestsReview: React.FC = () => {
         {loading ? (
           <div className="py-12 flex justify-center">
             <div className="w-8 h-8 border-3 border-[#8ECCFF] border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : fetchError ? (
+          <div className="py-12 text-center text-xs space-y-3">
+            <div className="p-3.5 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-[#D43D3D] rounded-2xl max-w-md mx-auto flex items-center justify-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{fetchError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => fetchRequests(currentPage, search, statusFilter, typeFilter)}
+              className="px-4 py-2 bg-[#08090B] dark:bg-slate-800 text-white rounded-2xl text-xs font-bold hover:bg-slate-800 transition"
+            >
+              Retry Loading Requests
+            </button>
           </div>
         ) : requests.length === 0 ? (
           <div className="py-12 text-center text-xs text-[#68717D]">
@@ -338,6 +364,13 @@ export const StudentRequestsReview: React.FC = () => {
               <div><strong>Request:</strong> {reviewingReq.requestType}</div>
               <div className="text-[#68717D]"><strong>Reason:</strong> "{reviewingReq.reason}"</div>
             </div>
+
+            {modalError && (
+              <div className="mb-4 p-3 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-[#D43D3D] text-xs rounded-2xl flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span>{modalError}</span>
+              </div>
+            )}
 
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>

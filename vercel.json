@@ -1,0 +1,7 @@
+{
+  "name": "examslot",
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/server.ts" }
+  ]
+}

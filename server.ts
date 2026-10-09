@@ -13,7 +13,10 @@ import {
   canDeleteSlot,
   isTimeOverlapping,
   createPasswordToken,
-  seedDb
+  seedDb,
+  getPersistedSessions,
+  saveSessionRecord,
+  deleteSessionRecord
 } from './server/db.ts';
 import { sendEmail, getEmailsForUser, markEmailRead } from './server/email.ts';
 import {
@@ -79,16 +82,34 @@ interface AuthSession {
 }
 
 const activeSessions = new Map<string, AuthSession>();
+
+// Initialize activeSessions from persistent storage in db.json
+try {
+  const storedSessions = getPersistedSessions();
+  for (const s of storedSessions) {
+    activeSessions.set(s.token, {
+      userId: s.userId,
+      email: s.email,
+      role: s.role,
+      lastActive: s.lastActive
+    });
+  }
+} catch (err) {
+  console.error('[AUTH SESSIONS INIT ERROR]', err);
+}
+
 const resendCooldowns = new Map<string, number>();
 
 function createSession(user: User): string {
   const token = crypto.randomBytes(32).toString('hex');
-  activeSessions.set(token, {
+  const sess: AuthSession = {
     userId: user.id,
     email: user.email,
     role: user.role,
     lastActive: Date.now()
-  });
+  };
+  activeSessions.set(token, sess);
+  saveSessionRecord({ token, ...sess });
   return token;
 }
 
@@ -111,11 +132,13 @@ function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   const SESSION_TTL = 24 * 60 * 60 * 1000;
   if (Date.now() - session.lastActive > SESSION_TTL) {
     activeSessions.delete(token);
+    deleteSessionRecord(token);
     res.status(401).json({ error: 'Session expired or invalid. Please log in again.' });
     return;
   }
 
   session.lastActive = Date.now();
+  saveSessionRecord({ token, ...session });
   (req as any).user = session;
   next();
 }
@@ -1146,6 +1169,16 @@ app.post('/api/admin/requests/:id/review', authMiddleware, adminOnly, (req: Requ
 
   saveDb();
 
+  console.log('[REQUEST REVIEW]', {
+    requestId: id,
+    action,
+    requestType: request.requestType,
+    studentId: student.id,
+    studentEmail: student.email,
+    unlocked: action === 'APPROVE',
+    reviewedBy: (req as any).user.email
+  });
+
   // Send transactional email notification to student (Bonus +2 marks)
   sendEmail({
     to: student.email,
@@ -1163,7 +1196,8 @@ app.post('/api/admin/requests/:id/review', authMiddleware, adminOnly, (req: Requ
 
   res.json({
     message: `Request successfully ${request.status.toLowerCase()}.`,
-    request
+    request,
+    student
   });
 });
 

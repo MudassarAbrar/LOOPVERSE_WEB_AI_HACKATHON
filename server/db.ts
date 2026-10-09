@@ -19,8 +19,17 @@ import {
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 
+export interface SessionRecord {
+  token: string;
+  userId: string;
+  email: string;
+  role: 'ADMIN' | 'STUDENT';
+  lastActive: number;
+}
+
 interface DatabaseSchema {
   users: User[];
+  sessions?: SessionRecord[];
   passwordTokens: PasswordToken[];
   branches: Branch[];
   courses: Course[];
@@ -46,6 +55,9 @@ export async function initDb(): Promise<void> {
     try {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       db = JSON.parse(content);
+      if (!Array.isArray(db.sessions)) {
+        db.sessions = [];
+      }
       if (
         Array.isArray(db.users) &&
         Array.isArray(db.branches) &&
@@ -650,6 +662,34 @@ export function getDb(): DatabaseSchema {
   return db;
 }
 
+export function getPersistedSessions(): SessionRecord[] {
+  if (!db) return [];
+  if (!Array.isArray(db.sessions)) {
+    db.sessions = [];
+  }
+  return db.sessions;
+}
+
+export function saveSessionRecord(session: SessionRecord): void {
+  if (!db) return;
+  if (!Array.isArray(db.sessions)) {
+    db.sessions = [];
+  }
+  const idx = db.sessions.findIndex(s => s.token === session.token);
+  if (idx >= 0) {
+    db.sessions[idx] = session;
+  } else {
+    db.sessions.push(session);
+  }
+  saveDb();
+}
+
+export function deleteSessionRecord(token: string): void {
+  if (!db || !Array.isArray(db.sessions)) return;
+  db.sessions = db.sessions.filter(s => s.token !== token);
+  saveDb();
+}
+
 // Asynchronously sync mutations to Supabase in background
 export function syncRecordToSupabase(table: string, record: any): void {
   if (!supabaseAdmin) return;
@@ -831,3 +871,4 @@ export function createPasswordToken(userId: string, email: string): PasswordToke
   saveDb();
   return record;
 }
+

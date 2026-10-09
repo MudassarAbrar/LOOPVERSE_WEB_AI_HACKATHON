@@ -24,6 +24,7 @@ export const ExamScheduleManagement: React.FC = () => {
   const [search, setSearch] = useState('');
   const [courseFilter, setCourseFilter] = useState('');
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -42,6 +43,7 @@ export const ExamScheduleManagement: React.FC = () => {
   const fetchSlots = async (page = currentPage, query = search, crs = courseFilter) => {
     try {
       setLoading(true);
+      setFetchError(null);
       const res = await api.getSlots(page, pageSize, query, crs);
       setSlots(res.data);
       setTotalItems(res.pagination.totalItems);
@@ -49,7 +51,9 @@ export const ExamScheduleManagement: React.FC = () => {
       setCurrentPage(res.pagination.currentPage);
     } catch (err: any) {
       console.error(err);
-      setAlertMessage({ type: 'error', text: err.message || 'Failed to fetch exam slots.' });
+      const errorMsg = err.message || 'Failed to fetch exam slots.';
+      setFetchError(errorMsg);
+      setAlertMessage({ type: 'error', text: errorMsg });
     } finally {
       setLoading(false);
     }
@@ -227,6 +231,20 @@ export const ExamScheduleManagement: React.FC = () => {
         {loading ? (
           <div className="py-12 flex justify-center">
             <div className="w-8 h-8 border-3 border-[#8ECCFF] border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : fetchError ? (
+          <div className="py-12 text-center text-xs space-y-3">
+            <div className="p-3.5 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-[#D43D3D] rounded-2xl max-w-md mx-auto flex items-center justify-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{fetchError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => fetchSlots(currentPage, search, courseFilter)}
+              className="px-4 py-2 bg-[#08090B] dark:bg-slate-800 text-white rounded-2xl text-xs font-bold hover:bg-slate-800 transition"
+            >
+              Retry Loading Slots
+            </button>
           </div>
         ) : slots.length === 0 ? (
           <div className="py-12 text-center text-xs text-[#68717D]">

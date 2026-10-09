@@ -3,64 +3,50 @@
     {
       "id": "user-admin-1",
       "email": "admin@examslot.edu",
-      "passwordHash": "$2b$10$9YPec/zkuiEjavqhLLyFJ.ZT6enkLrrYI8ZXJT7u6f3kB9frddpu6",
+      "passwordHash": "$2b$10$s0uwX7J2jlpk/cGCWVLxpuRa2MvPoO7sYqIsecTmsZy710POX.qSq",
       "role": "ADMIN",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.901Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "user-stu-1",
       "email": "ali.khan@student.examslot.edu",
-      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "passwordHash": "$2b$10$uwRk1J1H.KdJ4bpeROfDtOYFtNqTqi/OTWCvUGKM9IvFLPafnCpjK",
       "role": "STUDENT",
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "user-stu-2",
       "email": "fatima.noor@student.examslot.edu",
-      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "passwordHash": "$2b$10$uwRk1J1H.KdJ4bpeROfDtOYFtNqTqi/OTWCvUGKM9IvFLPafnCpjK",
       "role": "STUDENT",
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "user-stu-3",
       "email": "bilal.ahmed@student.examslot.edu",
-      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "passwordHash": "$2b$10$uwRk1J1H.KdJ4bpeROfDtOYFtNqTqi/OTWCvUGKM9IvFLPafnCpjK",
       "role": "STUDENT",
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "user-stu-4",
       "email": "zainab.tariq@student.examslot.edu",
-      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "passwordHash": "$2b$10$uwRk1J1H.KdJ4bpeROfDtOYFtNqTqi/OTWCvUGKM9IvFLPafnCpjK",
       "role": "STUDENT",
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "user-stu-5",
       "email": "hamza.malik@student.examslot.edu",
-      "passwordHash": "$2b$10$5G7aNSpj.Cey/n03CKEnFegUFc/hzN6TH176w9CYxKVejQfQdyE5m",
+      "passwordHash": "$2b$10$uwRk1J1H.KdJ4bpeROfDtOYFtNqTqi/OTWCvUGKM9IvFLPafnCpjK",
       "role": "STUDENT",
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
-    },
-    {
-      "id": "user-stu-1791543594527",
-      "email": "testdiagstudent1@student.examslot.edu",
-      "role": "STUDENT",
-      "createdAt": "2026-10-09T10:59:54.527Z",
-      "updatedAt": "2026-10-09T10:59:54.527Z"
-    },
-    {
-      "id": "user-stu-1791544137369",
-      "email": "zubair.ahmed.verified@student.examslot.edu",
-      "role": "STUDENT",
-      "createdAt": "2026-10-09T11:08:57.369Z",
-      "updatedAt": "2026-10-09T11:08:57.369Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "passwordTokens": [
@@ -69,27 +55,9 @@
       "userId": "user-stu-1",
       "email": "ali.khan@student.examslot.edu",
       "token": "demo-token-ali-khan-1",
-      "expiresAt": "2026-10-10T07:03:51.030Z",
-      "isUsed": false,
-      "createdAt": "2026-10-09T07:03:51.030Z"
-    },
-    {
-      "id": "token-1791543594527-qvg4",
-      "userId": "user-stu-1791543594527",
-      "email": "testdiagstudent1@student.examslot.edu",
-      "token": "7cb6634bda7725171ab99a1850a52878cb132c72ab796c15",
-      "expiresAt": "2026-10-10T10:59:54.527Z",
-      "isUsed": false,
-      "createdAt": "2026-10-09T10:59:54.527Z"
-    },
-    {
-      "id": "token-1791544137370-r5mk",
-      "userId": "user-stu-1791544137369",
-      "email": "zubair.ahmed.verified@student.examslot.edu",
-      "token": "96d1530a8be2532cd1ac4e1a27a576adc780c418f9fa4cbf",
-      "expiresAt": "2026-10-10T11:08:57.370Z",
-      "isUsed": false,
-      "createdAt": "2026-10-09T11:08:57.370Z"
+      "expiresAt": "2026-10-10T11:30:17.904Z",
+      "isUsed": true,
+      "createdAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "branches": [
@@ -101,8 +69,8 @@
       "address": "Plot 54, Block C, Canal Bank Road, Lahore",
       "contactNumber": "+92-42-111-887-887",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "br-islamabad-2",
@@ -112,8 +80,8 @@
       "address": "Sector H-9/1, Kashmir Highway, Islamabad",
       "contactNumber": "+92-51-111-887-888",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "br-karachi-3",
@@ -123,8 +91,8 @@
       "address": "Gulshan-e-Iqbal Block 7, Main University Road, Karachi",
       "contactNumber": "+92-21-111-887-889",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "br-peshawar-4",
@@ -134,8 +102,8 @@
       "address": "University Road, Near Board of Intermediate, Peshawar",
       "contactNumber": "+92-91-111-887-890",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "courses": [
@@ -146,8 +114,8 @@
       "creditHours": 3,
       "department": "Computer Science",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-cs201",
@@ -156,8 +124,8 @@
       "creditHours": 4,
       "department": "Computer Science",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-cs301",
@@ -166,8 +134,8 @@
       "creditHours": 3,
       "department": "Computer Science",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-cs304",
@@ -176,8 +144,8 @@
       "creditHours": 3,
       "department": "Software Engineering",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-mth101",
@@ -186,8 +154,8 @@
       "creditHours": 3,
       "department": "Mathematics",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-phy101",
@@ -196,8 +164,8 @@
       "creditHours": 3,
       "department": "Basic Sciences",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-eng101",
@@ -206,8 +174,8 @@
       "creditHours": 3,
       "department": "Humanities",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "crs-mgt201",
@@ -216,73 +184,11 @@
       "creditHours": 3,
       "department": "Management Sciences",
       "status": "ACTIVE",
-      "createdAt": "2026-10-09T07:03:51.029Z",
-      "updatedAt": "2026-10-09T07:03:51.029Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "students": [
-    {
-      "id": "stu-1791544137369",
-      "userId": "user-stu-1791544137369",
-      "fullName": "Zubair Ahmed",
-      "email": "zubair.ahmed.verified@student.examslot.edu",
-      "phone": "+923005544332",
-      "cnic": "35201-8877665-3",
-      "dob": "2004-03-21",
-      "gender": "Male",
-      "address": "Model Town Lahore",
-      "fatherName": "Ahmed Raza",
-      "parentCnic": "35201-1122334-9",
-      "parentOccupation": "Engineer",
-      "parentPhone": "+923009988776",
-      "emergencyContact": "+923009988776",
-      "regNumber": "BC20268899",
-      "program": "BS Computer Science",
-      "semester": 1,
-      "sessionBatch": "Fall 2026",
-      "prevQual": "HSSC",
-      "prevInstitute": "KIPS College",
-      "cgpa": 3.6,
-      "branchId": null,
-      "isBranchSelected": false,
-      "isDateSheetSaved": false,
-      "branchUnlocked": false,
-      "dateSheetUnlocked": false,
-      "assignedCourseIds": [],
-      "createdAt": "2026-10-09T11:08:57.369Z",
-      "updatedAt": "2026-10-09T11:08:57.369Z"
-    },
-    {
-      "id": "stu-1791543594527",
-      "userId": "user-stu-1791543594527",
-      "fullName": "Test Diagnostic Student",
-      "email": "testdiagstudent1@student.examslot.edu",
-      "phone": "+923001234567",
-      "cnic": "35201-9988776-1",
-      "dob": "2004-01-15",
-      "gender": "Male",
-      "address": "Lahore test address",
-      "fatherName": "Father Name",
-      "parentCnic": "35201-1122334-1",
-      "parentOccupation": "Business",
-      "parentPhone": "+923007654321",
-      "emergencyContact": "+923007654321",
-      "regNumber": "BCTEST9999",
-      "program": "BS Computer Science",
-      "semester": 1,
-      "sessionBatch": "Fall 2026",
-      "prevQual": "HSSC",
-      "prevInstitute": "PGC",
-      "cgpa": 3.5,
-      "branchId": null,
-      "isBranchSelected": false,
-      "isDateSheetSaved": false,
-      "branchUnlocked": false,
-      "dateSheetUnlocked": false,
-      "assignedCourseIds": [],
-      "createdAt": "2026-10-09T10:59:54.527Z",
-      "updatedAt": "2026-10-09T10:59:54.527Z"
-    },
     {
       "id": "stu-1",
       "userId": "user-stu-1",
@@ -308,9 +214,9 @@
       "branchId": "br-lahore-1",
       "branchName": "Lahore Central Campus",
       "isBranchSelected": true,
-      "isDateSheetSaved": true,
+      "isDateSheetSaved": false,
       "branchUnlocked": false,
-      "dateSheetUnlocked": false,
+      "dateSheetUnlocked": true,
       "assignedCourseIds": [
         "crs-cs101",
         "crs-cs201",
@@ -318,8 +224,8 @@
         "crs-cs304",
         "crs-mth101"
       ],
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:53:52.454Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "stu-2",
@@ -355,8 +261,8 @@
         "crs-cs304",
         "crs-eng101"
       ],
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "stu-3",
@@ -392,8 +298,8 @@
         "crs-mth101",
         "crs-phy101"
       ],
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "stu-4",
@@ -427,8 +333,8 @@
         "crs-cs101",
         "crs-mth101"
       ],
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "stu-5",
@@ -465,8 +371,8 @@
         "crs-mth101",
         "crs-eng101"
       ],
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "slots": [
@@ -479,8 +385,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs101-a1",
@@ -491,8 +397,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs101-m2",
@@ -503,8 +409,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs201-m1",
@@ -515,8 +421,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs201-a1",
@@ -527,8 +433,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs201-m2",
@@ -539,8 +445,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs301-m1",
@@ -551,8 +457,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs301-a1",
@@ -563,8 +469,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs301-m2",
@@ -575,8 +481,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs304-m1",
@@ -587,8 +493,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs304-a1",
@@ -599,8 +505,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-cs304-m2",
@@ -611,8 +517,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-mth101-m1",
@@ -623,8 +529,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-mth101-a1",
@@ -635,8 +541,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-mth101-m2",
@@ -647,8 +553,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-phy101-m1",
@@ -659,8 +565,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-phy101-a1",
@@ -671,8 +577,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-phy101-m2",
@@ -683,8 +589,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-eng101-m1",
@@ -695,8 +601,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-eng101-a1",
@@ -707,8 +613,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-eng101-m2",
@@ -719,8 +625,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-mgt201-m1",
@@ -731,8 +637,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-mgt201-a1",
@@ -743,8 +649,8 @@
       "startTime": "14:00",
       "endTime": "17:00",
       "capacity": 30,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "slot-mgt201-m2",
@@ -755,8 +661,8 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "capacity": 25,
-      "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z",
+      "updatedAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "selections": [
@@ -765,98 +671,63 @@
       "studentId": "stu-2",
       "courseId": "crs-cs101",
       "slotId": "slot-cs101-m1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-fn-2",
       "studentId": "stu-2",
       "courseId": "crs-cs201",
       "slotId": "slot-cs201-a1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-fn-3",
       "studentId": "stu-2",
       "courseId": "crs-cs304",
       "slotId": "slot-cs304-m1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-fn-4",
       "studentId": "stu-2",
       "courseId": "crs-eng101",
       "slotId": "slot-eng101-m1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-hm-1",
       "studentId": "stu-5",
       "courseId": "crs-cs101",
       "slotId": "slot-cs101-m2",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-hm-2",
       "studentId": "stu-5",
       "courseId": "crs-cs201",
       "slotId": "slot-cs201-m1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-hm-3",
       "studentId": "stu-5",
       "courseId": "crs-cs301",
       "slotId": "slot-cs301-m1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-hm-4",
       "studentId": "stu-5",
       "courseId": "crs-mth101",
       "slotId": "slot-mth101-m1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "sel-hm-5",
       "studentId": "stu-5",
       "courseId": "crs-eng101",
       "slotId": "slot-eng101-a1",
-      "createdAt": "2026-10-09T07:03:51.030Z"
-    },
-    {
-      "id": "sel-stu-1-crs-cs101",
-      "studentId": "stu-1",
-      "courseId": "crs-cs101",
-      "slotId": "slot-cs101-a1",
-      "createdAt": "2026-10-09T07:53:52.454Z"
-    },
-    {
-      "id": "sel-stu-1-crs-cs201",
-      "studentId": "stu-1",
-      "courseId": "crs-cs201",
-      "slotId": "slot-cs201-a1",
-      "createdAt": "2026-10-09T07:53:52.454Z"
-    },
-    {
-      "id": "sel-stu-1-crs-cs301",
-      "studentId": "stu-1",
-      "courseId": "crs-cs301",
-      "slotId": "slot-cs301-m1",
-      "createdAt": "2026-10-09T07:53:52.454Z"
-    },
-    {
-      "id": "sel-stu-1-crs-cs304",
-      "studentId": "stu-1",
-      "courseId": "crs-cs304",
-      "slotId": "slot-cs304-m2",
-      "createdAt": "2026-10-09T07:53:52.454Z"
-    },
-    {
-      "id": "sel-stu-1-crs-mth101",
-      "studentId": "stu-1",
-      "courseId": "crs-mth101",
-      "slotId": "slot-mth101-m1",
-      "createdAt": "2026-10-09T07:53:52.454Z"
+      "createdAt": "2026-10-09T11:30:17.904Z"
     }
   ],
   "requests": [
@@ -868,8 +739,10 @@
       "regNumber": "BC210405991",
       "requestType": "CHANGE_DATESHEET",
       "reason": "Have an overlapping family medical emergency on Nov 10; need to reschedule CS101 slot to morning shift.",
-      "status": "PENDING",
-      "dateRaised": "2026-10-09T02:03:51.030Z"
+      "status": "APPROVED",
+      "dateRaised": "2026-10-09T06:30:17.904Z",
+      "adminRemark": "Approved via automated test suite",
+      "resolvedAt": "2026-10-09T11:30:17.907Z"
     },
     {
       "id": "req-2",
@@ -881,34 +754,18 @@
       "reason": "Relocating to Lahore for family wedding during exam weeks.",
       "status": "APPROVED",
       "adminRemark": "Approved per university inter-campus transfer policy for exam sitting.",
-      "dateRaised": "2026-10-07T07:03:51.030Z",
-      "resolvedAt": "2026-10-08T07:03:51.030Z"
+      "dateRaised": "2026-10-07T11:30:17.904Z",
+      "resolvedAt": "2026-10-08T11:30:17.904Z"
     }
   ],
   "auditLogs": [
-    {
-      "id": "audit-1791544137371-qbvq6",
-      "adminEmail": "admin@examslot.edu",
-      "action": "CREATE_STUDENT",
-      "target": "Zubair Ahmed (BC20268899)",
-      "details": "Email token generated.",
-      "timestamp": "2026-10-09T11:08:57.371Z"
-    },
-    {
-      "id": "audit-1791543594530-4cyc8",
-      "adminEmail": "admin@examslot.edu",
-      "action": "CREATE_STUDENT",
-      "target": "Test Diagnostic Student (BCTEST9999)",
-      "details": "Email token generated.",
-      "timestamp": "2026-10-09T10:59:54.530Z"
-    },
     {
       "id": "audit-1",
       "adminEmail": "admin@examslot.edu",
       "action": "SYSTEM_SEED",
       "target": "SYSTEM",
       "details": "System initialized with seed branches, courses, and students.",
-      "timestamp": "2026-10-09T07:03:51.030Z"
+      "timestamp": "2026-10-09T11:30:17.904Z"
     },
     {
       "id": "audit-2",
@@ -916,30 +773,10 @@
       "action": "APPROVE_REQUEST",
       "target": "Fatima Noor (BC210402011)",
       "details": "Approved branch change request with remark: Approved per university inter-campus transfer policy.",
-      "timestamp": "2026-10-08T07:03:51.030Z"
+      "timestamp": "2026-10-08T11:30:17.904Z"
     }
   ],
   "emails": [
-    {
-      "id": "email-1791544137370-e3ej",
-      "to": "zubair.ahmed.verified@student.examslot.edu",
-      "subject": "ExamSlot Portal - Account Created & Password Setup",
-      "body": "Hello Zubair Ahmed,\n\nYour student portal account has been created for BS Computer Science. Please click the secure link below to set your password. This link is single-use and will expire in 24 hours.\n\nPasswords are never stored in plain text.",
-      "link": "/set-password?token=96d1530a8be2532cd1ac4e1a27a576adc780c418f9fa4cbf",
-      "type": "PASSWORD_SETUP",
-      "timestamp": "2026-10-09T11:08:57.370Z",
-      "read": false
-    },
-    {
-      "id": "email-1791543594528-o27e",
-      "to": "testdiagstudent1@student.examslot.edu",
-      "subject": "ExamSlot Portal - Account Created & Password Setup",
-      "body": "Hello Test Diagnostic Student,\n\nYour student portal account has been created for BS Computer Science. Please click the secure link below to set your password. This link is single-use and will expire in 24 hours.\n\nPasswords are never stored in plain text.",
-      "link": "/set-password?token=7cb6634bda7725171ab99a1850a52878cb132c72ab796c15",
-      "type": "PASSWORD_SETUP",
-      "timestamp": "2026-10-09T10:59:54.528Z",
-      "read": false
-    },
     {
       "id": "email-welcome-1",
       "to": "ali.khan@student.examslot.edu",
@@ -947,8 +784,8 @@
       "body": "Your student portal account has been created for Spring 2026 examination sitting. Please set your password using the link below.",
       "link": "/set-password?token=demo-token-ali-khan-1",
       "type": "PASSWORD_SETUP",
-      "timestamp": "2026-10-09T07:03:51.030Z",
-      "read": true
+      "timestamp": "2026-10-09T11:30:17.904Z",
+      "read": false
     },
     {
       "id": "email-req-approved",
@@ -956,8 +793,24 @@
       "subject": "Change Request Approved - ExamSlot Portal",
       "body": "Your request for CHANGE_BRANCH has been approved by the examination controller. You may now re-select your preferred examination branch.",
       "type": "REQUEST_APPROVED",
-      "timestamp": "2026-10-08T07:03:51.030Z",
+      "timestamp": "2026-10-08T11:30:17.904Z",
       "read": true
+    }
+  ],
+  "sessions": [
+    {
+      "token": "test-admin-persisted-token-123",
+      "userId": "user-admin-1",
+      "email": "admin@examslot.edu",
+      "role": "ADMIN",
+      "lastActive": 1791545417906
+    },
+    {
+      "token": "student-test-token-456",
+      "userId": "user-stu-1",
+      "email": "ali.khan@student.examslot.edu",
+      "role": "STUDENT",
+      "lastActive": 1791545417908
     }
   ]
 }
