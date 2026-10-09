@@ -114,7 +114,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ studentId }) => {
       )}
 
       {isOpen && (
-        <div className="w-[90vw] sm:w-[420px] h-[580px] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
+        <div className="w-[90vw] sm:w-[420px] h-[580px] max-h-[calc(100vh-3rem)] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-900/80 via-indigo-900/80 to-slate-900 p-4 border-b border-slate-700/80 flex items-center justify-between">
             <div className="flex items-center gap-3">

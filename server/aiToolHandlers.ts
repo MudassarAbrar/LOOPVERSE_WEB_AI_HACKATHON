@@ -32,22 +32,24 @@ export async function executeAiTool(name: string, args: any) {
       case 'getCourseSlots': {
         const courseCodeStr = (args.courseCode || '').toUpperCase().trim();
         try {
-          const { data: course } = await supabaseAdmin
+          const { data: course, error: courseError } = await supabaseAdmin
             .from('courses')
             .select('id, course_code, title')
             .eq('course_code', courseCodeStr)
             .single();
 
-          if (course) {
-            const { data: slots } = await supabaseAdmin
+          if (!courseError && course) {
+            const { data: slots, error: slotsError } = await supabaseAdmin
               .from('exam_slots')
               .select('id, exam_date, start_time, end_time, capacity')
               .eq('course_id', course.id);
 
-            return { course: course.title, courseCode: course.course_code, slots: slots || [] };
+            if (!slotsError && slots) {
+              return { course: course.title, courseCode: course.course_code, slots };
+            }
           }
         } catch {
-          // fallback
+          // fallback to local DB on error
         }
         const db = getDb();
         const localCourse = db.courses.find(c => c.code.toUpperCase() === courseCodeStr);
@@ -69,34 +71,38 @@ export async function executeAiTool(name: string, args: any) {
       case 'checkSlotSeats': {
         const slotIdStr = args.slotId;
         try {
-          const { data: slot } = await supabaseAdmin
+          const { data: slot, error: slotError } = await supabaseAdmin
             .from('exam_slots')
             .select('id, capacity')
             .eq('id', slotIdStr)
             .single();
 
-          if (slot) {
-            const { count } = await supabaseAdmin
+          if (!slotError && slot) {
+            const { count, error: countError } = await supabaseAdmin
               .from('student_slot_selections')
               .select('*', { count: 'exact', head: true })
               .eq('slot_id', slotIdStr);
 
-            const cap = slot.capacity || 50;
-            const booked = count || 0;
-            return {
-              slotId: slotIdStr,
-              totalCapacity: cap,
-              bookedSeats: booked,
-              remainingSeats: Math.max(0, cap - booked)
-            };
+            if (!countError && typeof count === 'number') {
+              const cap = slot.capacity || 50;
+              return {
+                slotId: slotIdStr,
+                totalCapacity: cap,
+                bookedSeats: count,
+                remainingSeats: Math.max(0, cap - count)
+              };
+            }
           }
         } catch {
-          // fallback
+          // fallback to local DB on error
         }
         const db = getDb();
         const localSlot = db.slots.find(s => s.id === slotIdStr);
+        if (!localSlot) {
+          return { error: `Exam slot with ID '${slotIdStr}' not found in database.` };
+        }
         const bookedCount = db.selections.filter(sel => sel.slotId === slotIdStr).length;
-        const totalCap = localSlot?.capacity || 30;
+        const totalCap = localSlot.capacity;
         return {
           slotId: slotIdStr,
           totalCapacity: totalCap,
