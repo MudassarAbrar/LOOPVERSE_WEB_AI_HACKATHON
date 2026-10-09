@@ -621,7 +621,7 @@ export async function seedDb(): Promise<void> {
       email: 'ali.khan@student.examslot.edu',
       token: 'demo-token-ali-khan-1',
       expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      isUsed: false,
+      isUsed: true, // Mark used since student account already has active demo password Student@123
       createdAt: new Date().toISOString()
     }
   ];
@@ -810,7 +810,14 @@ export function isTimeOverlapping(
 
 // Generate secure password reset / onboarding token
 export function createPasswordToken(userId: string, email: string): PasswordToken {
-  const token = crypto.randomBytes(24).toString('hex');
+  // Invalidate all previous unused tokens for this user so only the newest link works
+  db.passwordTokens.forEach(t => {
+    if (t.userId === userId && !t.isUsed) {
+      t.isUsed = true;
+    }
+  });
+
+  const token = crypto.randomBytes(32).toString('hex');
   const record: PasswordToken = {
     id: `token-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     userId,

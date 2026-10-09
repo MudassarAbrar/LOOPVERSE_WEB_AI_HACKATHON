@@ -36,6 +36,7 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
   const [viewModalStudent, setViewModalStudent] = useState<StudentProfile | null>(null);
 
   const [activeFormTab, setActiveFormTab] = useState<'personal' | 'parent' | 'academic'>('personal');
+  const [resendCooldowns, setResendCooldowns] = useState<Record<string, number>>({});
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -62,6 +63,123 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error'; text: string; link?: string } | null>(null);
+
+  // Countdown timer for 60s resend invitation cooldown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setResendCooldowns(prev => {
+        const updated = { ...prev };
+        let changed = false;
+        Object.keys(updated).forEach(id => {
+          if (updated[id] > 0) {
+            updated[id] -= 1;
+            changed = true;
+          }
+        });
+        return changed ? updated : prev;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatCnicInput = (raw: string): string => {
+    const digits = raw.replace(/\D/g, '').slice(0, 13);
+    if (digits.length <= 5) return digits;
+    if (digits.length <= 12) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+    return `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12)}`;
+  };
+
+  const validatePersonalStep = (): boolean => {
+    setFormError(null);
+    if (!formData.fullName.trim() || formData.fullName.trim().length < 3) {
+      setFormError('Full name is required (at least 3 characters).');
+      return false;
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setFormError('Please enter a valid student email address (e.g. student@student.examslot.edu).');
+      return false;
+    }
+    const phoneRegex = /^(\+92|0)(3\d{2}-?\d{7}|\d{2,3}-?\d{6,8})$/;
+    if (/[a-zA-Z]/.test(formData.phone) || !phoneRegex.test(formData.phone.trim())) {
+      setFormError('Please enter a valid Pakistani phone number (e.g. +92-300-1234567 or 0300-1234567).');
+      return false;
+    }
+    const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
+    if (/[a-zA-Z]/.test(formData.cnic) || !cnicRegex.test(formData.cnic.trim())) {
+      setFormError('Please enter a valid 13-digit CNIC or B-Form format (e.g. 35202-1234567-1).');
+      return false;
+    }
+    if (!formData.dob) {
+      setFormError('Date of birth is required.');
+      return false;
+    }
+    if (!formData.address.trim() || formData.address.trim().length < 15) {
+      setFormError('Student address must be at least 15 characters long, specifying street, area, and city.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateParentStep = (): boolean => {
+    setFormError(null);
+    if (!formData.fatherName.trim() || formData.fatherName.trim().length < 3) {
+      setFormError('Father/Guardian name is required (min 3 characters).');
+      return false;
+    }
+    const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
+    if (/[a-zA-Z]/.test(formData.parentCnic) || !cnicRegex.test(formData.parentCnic.trim())) {
+      setFormError('Parent CNIC must be a valid 13-digit format (e.g. 35202-9876543-1).');
+      return false;
+    }
+    const phoneRegex = /^(\+92|0)(3\d{2}-?\d{7}|\d{2,3}-?\d{6,8})$/;
+    if (/[a-zA-Z]/.test(formData.parentPhone) || !phoneRegex.test(formData.parentPhone.trim())) {
+      setFormError('Parent phone number must be a valid Pakistani phone format (e.g. +92-321-9876543).');
+      return false;
+    }
+    if (/[a-zA-Z]/.test(formData.emergencyContact) || !phoneRegex.test(formData.emergencyContact.trim())) {
+      setFormError('Emergency contact must be a valid Pakistani phone format (e.g. +92-42-35889900).');
+      return false;
+    }
+    if (!formData.parentOccupation.trim() || formData.parentOccupation.trim().length < 2) {
+      setFormError('Parent occupation is required.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateAcademicStep = (): boolean => {
+    setFormError(null);
+    if (!formData.regNumber.trim() || formData.regNumber.trim().length < 4) {
+      setFormError('Registration number is required (min 4 characters).');
+      return false;
+    }
+    if (!formData.program.trim()) {
+      setFormError('Degree program is required.');
+      return false;
+    }
+    if (formData.semester < 1 || formData.semester > 8) {
+      setFormError('Semester must be between 1 and 8.');
+      return false;
+    }
+    if (!formData.sessionBatch.trim()) {
+      setFormError('Batch/Session is required.');
+      return false;
+    }
+    if (!formData.prevQual.trim() || formData.prevQual.trim().length < 2) {
+      setFormError('Previous Qualification is required (e.g. FSc Pre-Engineering / A-Levels).');
+      return false;
+    }
+    if (!formData.prevInstitute.trim() || formData.prevInstitute.trim().length < 3) {
+      setFormError('Previous Institute name is required.');
+      return false;
+    }
+    if (isNaN(formData.cgpa) || formData.cgpa < 0 || formData.cgpa > 4.0) {
+      setFormError('Current CGPA / Previous Marks must be between 0.0 and 4.0.');
+      return false;
+    }
+    return true;
+  };
 
   const fetchStudents = async (page = currentPage, query = search) => {
     try {
@@ -113,6 +231,21 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Enforce full 3-step validation before submission
+    if (!validatePersonalStep()) {
+      setActiveFormTab('personal');
+      return;
+    }
+    if (!validateParentStep()) {
+      setActiveFormTab('parent');
+      return;
+    }
+    if (!validateAcademicStep()) {
+      setActiveFormTab('academic');
+      return;
+    }
+
     setSubmitting(true);
     setFormError(null);
 
@@ -133,8 +266,11 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
   };
 
   const handleResendInvite = async (student: StudentProfile) => {
+    if (resendCooldowns[student.id] > 0) return;
+
     try {
       const res = await api.resendStudentInvite(student.id);
+      setResendCooldowns(prev => ({ ...prev, [student.id]: 60 }));
       setAlertMessage({
         type: 'success',
         text: `Fresh onboarding email dispatched to ${student.email}.`,
@@ -322,12 +458,20 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
-                            <button
+                             <button
                               onClick={() => handleResendInvite(s)}
-                              className="p-1.5 text-[#68717D] hover:text-[#16865B] rounded-xl hover:bg-emerald-50"
-                              title="Resend Setup Email"
+                              disabled={Boolean(resendCooldowns[s.id])}
+                              className={`p-1.5 rounded-xl transition flex items-center gap-1 ${
+                                resendCooldowns[s.id]
+                                  ? 'text-slate-400 bg-slate-100 cursor-not-allowed'
+                                  : 'text-[#68717D] hover:text-[#16865B] hover:bg-emerald-50'
+                              }`}
+                              title={resendCooldowns[s.id] ? `Resend available in ${resendCooldowns[s.id]}s` : 'Resend Setup Email'}
                             >
                               <Send className="w-3.5 h-3.5" />
+                              {resendCooldowns[s.id] ? (
+                                <span className="text-[10px] font-mono">{resendCooldowns[s.id]}s</span>
+                              ) : null}
                             </button>
                             <button
                               onClick={() => handleDelete(s)}
@@ -375,9 +519,13 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                       </button>
                       <button
                         onClick={() => handleResendInvite(s)}
-                        className="text-xs text-[#68717D] hover:text-[#16865B] flex items-center gap-1 font-semibold"
+                        disabled={Boolean(resendCooldowns[s.id])}
+                        className={`text-xs flex items-center gap-1 font-semibold ${
+                          resendCooldowns[s.id] ? 'text-slate-400 cursor-not-allowed' : 'text-[#68717D] hover:text-[#16865B]'
+                        }`}
                       >
-                        <Send className="w-3 h-3" /> Resend Setup
+                        <Send className="w-3 h-3" />
+                        {resendCooldowns[s.id] ? `Wait ${resendCooldowns[s.id]}s` : 'Resend Setup'}
                       </button>
                     </div>
                   </div>
@@ -431,7 +579,9 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
               </button>
               <button
                 type="button"
-                onClick={() => setActiveFormTab('parent')}
+                onClick={() => {
+                  if (validatePersonalStep()) setActiveFormTab('parent');
+                }}
                 className={`pb-2.5 px-3 text-xs font-bold flex items-center gap-1.5 border-b-2 transition ${
                   activeFormTab === 'parent'
                     ? 'border-[#08090B] dark:border-[#C8F85A] text-[#08090B] dark:text-[#C8F85A]'
@@ -443,7 +593,9 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
               </button>
               <button
                 type="button"
-                onClick={() => setActiveFormTab('academic')}
+                onClick={() => {
+                  if (validatePersonalStep() && validateParentStep()) setActiveFormTab('academic');
+                }}
                 className={`pb-2.5 px-3 text-xs font-bold flex items-center gap-1.5 border-b-2 transition ${
                   activeFormTab === 'academic'
                     ? 'border-[#08090B] dark:border-[#C8F85A] text-[#08090B] dark:text-[#C8F85A]'
@@ -468,7 +620,7 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                        Full Name
+                        Full Name (Required)
                       </label>
                       <input
                         type="text"
@@ -481,7 +633,7 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                        Email (Unique)
+                        Email (Unique, Valid Structure)
                       </label>
                       <input
                         type="email"
@@ -510,13 +662,14 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                        CNIC or B-Form
+                        CNIC or B-Form (13 digits)
                       </label>
                       <input
                         type="text"
                         value={formData.cnic}
-                        onChange={(e) => setFormData({ ...formData, cnic: e.target.value })}
+                        onChange={(e) => setFormData({ ...formData, cnic: formatCnicInput(e.target.value) })}
                         placeholder="35202-1234567-1"
+                        maxLength={15}
                         required
                         className="w-full px-3 py-2 text-xs font-mono bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
                       />
@@ -552,13 +705,13 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                        Address
+                        Full Residential Address (min 15 chars)
                       </label>
                       <input
                         type="text"
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                        placeholder="City, Street"
+                        placeholder="House #, Street name, Area, City"
                         required
                         className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white"
                       />
@@ -590,8 +743,9 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                       <input
                         type="text"
                         value={formData.parentCnic}
-                        onChange={(e) => setFormData({ ...formData, parentCnic: e.target.value })}
+                        onChange={(e) => setFormData({ ...formData, parentCnic: formatCnicInput(e.target.value) })}
                         placeholder="35202-9876543-1"
+                        maxLength={15}
                         required
                         className="w-full px-3 py-2 text-xs font-mono bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white"
                       />
@@ -675,6 +829,35 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
+                        Previous Qualification (PRD Required)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.prevQual}
+                        onChange={(e) => setFormData({ ...formData, prevQual: e.target.value })}
+                        placeholder="e.g. HSSC / FSc Pre-Engineering / A-Levels"
+                        required
+                        className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
+                        Previous Institute (PRD Required)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.prevInstitute}
+                        onChange={(e) => setFormData({ ...formData, prevInstitute: e.target.value })}
+                        placeholder="e.g. Punjab Group of Colleges, Lahore"
+                        required
+                        className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
@@ -705,7 +888,7 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                        Current CGPA
+                        Current CGPA / Result
                       </label>
                       <input
                         type="number"
@@ -750,10 +933,13 @@ export const StudentManagement: React.FC<StudentManagementProps> = ({ onAssignCo
                     <button
                       type="button"
                       onClick={() => {
-                        if (activeFormTab === 'personal') setActiveFormTab('parent');
-                        else if (activeFormTab === 'parent') setActiveFormTab('academic');
+                        if (activeFormTab === 'personal') {
+                          if (validatePersonalStep()) setActiveFormTab('parent');
+                        } else if (activeFormTab === 'parent') {
+                          if (validateParentStep()) setActiveFormTab('academic');
+                        }
                       }}
-                      className="px-4 py-2 bg-[#8ECCFF] text-[#08090B] rounded-2xl text-xs font-bold"
+                      className="px-4 py-2 bg-[#8ECCFF] text-[#08090B] rounded-2xl text-xs font-bold hover:opacity-90 active:scale-95 transition"
                     >
                       Next Step →
                     </button>

@@ -15,6 +15,34 @@ import { api } from '../../api/client.ts';
 import { Branch } from '../../types/index.ts';
 import { Pagination } from '../common/Pagination.tsx';
 
+const SUPPORTED_CITIES = [
+  'Lahore', 'Islamabad', 'Karachi', 'Peshawar', 'Faisalabad',
+  'Rawalpindi', 'Multan', 'Quetta', 'Sialkot', 'Gujranwala'
+];
+
+const CITY_CAMPUS_ADDRESSES: Record<string, string[]> = {
+  Lahore: [
+    '123 Canal Road Campus, Gulberg III, Lahore',
+    '45 Johar Town Main Boulevard Campus, Lahore',
+    '78 DHA Phase 5 Commercial Campus, Lahore'
+  ],
+  Islamabad: [
+    'Sector H-12 Main Campus, Islamabad',
+    'Blue Area Commercial Plaza Campus, Islamabad'
+  ],
+  Karachi: [
+    'Main University Road Campus, Gulshan-e-Iqbal, Karachi',
+    'Clifton Block 5 Campus, Karachi'
+  ],
+  Peshawar: ['University Road Campus, Peshawar'],
+  Faisalabad: ['Jail Road Campus, Faisalabad'],
+  Rawalpindi: ['6th Road Campus, Satellite Town, Rawalpindi'],
+  Multan: ['Boson Road Campus, Multan'],
+  Quetta: ['Airport Road Campus, Quetta'],
+  Sialkot: ['Paris Road Campus, Sialkot'],
+  Gujranwala: ['GT Road Campus, Gujranwala']
+};
+
 export const BranchManagement: React.FC = () => {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -31,8 +59,9 @@ export const BranchManagement: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     code: '',
-    city: '',
-    address: '',
+    city: 'Lahore',
+    address: CITY_CAMPUS_ADDRESSES['Lahore'][0],
+    customAddress: '',
     contactNumber: '',
     status: 'ACTIVE' as 'ACTIVE' | 'INACTIVE'
   });
@@ -65,8 +94,9 @@ export const BranchManagement: React.FC = () => {
     setFormData({
       name: '',
       code: '',
-      city: '',
-      address: '',
+      city: 'Lahore',
+      address: CITY_CAMPUS_ADDRESSES['Lahore'][0],
+      customAddress: '',
       contactNumber: '',
       status: 'ACTIVE'
     });
@@ -76,11 +106,13 @@ export const BranchManagement: React.FC = () => {
 
   const handleOpenEdit = (branch: Branch) => {
     setEditingBranch(branch);
+    const isPredefined = CITY_CAMPUS_ADDRESSES[branch.city]?.includes(branch.address);
     setFormData({
       name: branch.name,
       code: branch.code,
       city: branch.city,
-      address: branch.address,
+      address: isPredefined ? branch.address : 'CUSTOM',
+      customAddress: isPredefined ? '' : branch.address,
       contactNumber: branch.contactNumber,
       status: branch.status
     });
@@ -88,17 +120,59 @@ export const BranchManagement: React.FC = () => {
     setModalOpen(true);
   };
 
+  const handleCityChange = (newCity: string) => {
+    const availableAddresses = CITY_CAMPUS_ADDRESSES[newCity] || [];
+    setFormData(prev => ({
+      ...prev,
+      city: newCity,
+      address: availableAddresses.length > 0 ? availableAddresses[0] : 'CUSTOM',
+      customAddress: ''
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setFormError(null);
 
+    // Validate City
+    if (!SUPPORTED_CITIES.includes(formData.city)) {
+      setFormError('Please select a valid supported city.');
+      setSubmitting(false);
+      return;
+    }
+
+    // Validate Address
+    const finalAddress = formData.address === 'CUSTOM' ? formData.customAddress.trim() : formData.address.trim();
+    if (!finalAddress || finalAddress.length < 10) {
+      setFormError('Physical address is required and must be at least 10 characters.');
+      setSubmitting(false);
+      return;
+    }
+
+    // Validate Contact Number (no letters, valid Pakistani format)
+    const contact = formData.contactNumber.trim();
+    if (/[a-zA-Z]/.test(contact) || !/^(\+92|0)[0-9\-\s]{7,14}$/.test(contact)) {
+      setFormError('Contact number accepts numbers, hyphens, and +92 prefix only (e.g. +92-42-1234567 or 061-1234567). Rejecting letters.');
+      setSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      name: formData.name.trim(),
+      code: formData.code.trim().toUpperCase(),
+      city: formData.city,
+      address: finalAddress,
+      contactNumber: contact,
+      status: formData.status
+    };
+
     try {
       if (editingBranch) {
-        await api.updateBranch(editingBranch.id, formData);
+        await api.updateBranch(editingBranch.id, payload);
         setAlertMessage({ type: 'success', text: `Branch '${formData.name}' updated successfully.` });
       } else {
-        await api.createBranch(formData);
+        await api.createBranch(payload);
         setAlertMessage({ type: 'success', text: `New branch '${formData.name}' added successfully.` });
       }
       setModalOpen(false);
@@ -419,16 +493,18 @@ export const BranchManagement: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                    City
+                    City (Required)
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="e.g. Lahore"
+                    onChange={(e) => handleCityChange(e.target.value)}
                     required
                     className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
-                  />
+                  >
+                    {SUPPORTED_CITIES.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -448,16 +524,30 @@ export const BranchManagement: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                  Physical Address
+                  Physical Campus Address (City-Connected)
                 </label>
-                <textarea
-                  rows={2}
+                <select
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="Complete campus address"
                   required
-                  className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
-                />
+                  className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white mb-2 focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
+                >
+                  {(CITY_CAMPUS_ADDRESSES[formData.city] || []).map(addr => (
+                    <option key={addr} value={addr}>{addr}</option>
+                  ))}
+                  <option value="CUSTOM">+ Enter Custom Campus Address</option>
+                </select>
+
+                {formData.address === 'CUSTOM' && (
+                  <textarea
+                    rows={2}
+                    value={formData.customAddress}
+                    onChange={(e) => setFormData({ ...formData, customAddress: e.target.value })}
+                    placeholder={`Enter detailed campus address for ${formData.city} (min 10 characters)...`}
+                    required
+                    className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
+                  />
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -469,10 +559,11 @@ export const BranchManagement: React.FC = () => {
                     type="text"
                     value={formData.contactNumber}
                     onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                    placeholder="+92-42-111-887-887"
+                    placeholder="e.g. +92-42-1234567 or 061-1234567"
                     required
                     className="w-full px-3 py-2 text-xs font-mono bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
                   />
+                  <p className="text-[10px] text-[#68717D] mt-0.5">Numbers & hyphens only (e.g., +92-42-35812345)</p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">

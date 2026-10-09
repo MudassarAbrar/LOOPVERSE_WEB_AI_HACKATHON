@@ -37,22 +37,57 @@ app.use(express.json());
 // Initialize Database
 await initDb();
 
-// ----------------- AUTH HELPERS -----------------
-// Simple cryptographically signed Bearer session token
+// ----------------- AUTH HELPERS & VALIDATION CONSTANTS -----------------
+export const SUPPORTED_CITIES = [
+  'Lahore', 'Islamabad', 'Karachi', 'Peshawar', 'Faisalabad',
+  'Rawalpindi', 'Multan', 'Quetta', 'Sialkot', 'Gujranwala'
+];
+
+export const CITY_CAMPUS_ADDRESSES: Record<string, string[]> = {
+  Lahore: [
+    '123 Canal Road Campus, Gulberg III, Lahore',
+    '45 Johar Town Main Boulevard Campus, Lahore',
+    '78 DHA Phase 5 Commercial Campus, Lahore'
+  ],
+  Islamabad: [
+    'Sector H-12 Main Campus, Islamabad',
+    'Blue Area Commercial Plaza Campus, Islamabad'
+  ],
+  Karachi: [
+    'Main University Road Campus, Gulshan-e-Iqbal, Karachi',
+    'Clifton Block 5 Campus, Karachi'
+  ],
+  Peshawar: ['University Road Campus, Peshawar'],
+  Faisalabad: ['Jail Road Campus, Faisalabad'],
+  Rawalpindi: ['6th Road Campus, Satellite Town, Rawalpindi'],
+  Multan: ['Boson Road Campus, Multan'],
+  Quetta: ['Airport Road Campus, Quetta'],
+  Sialkot: ['Paris Road Campus, Sialkot'],
+  Gujranwala: ['GT Road Campus, Gujranwala']
+};
+
+const COURSE_CODE_REGEX = /^[A-Z]{2,6}[0-9]{3,4}$/;
+const CNIC_REGEX = /^\d{5}-\d{7}-\d{1}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const PAK_PHONE_REGEX = /^(\+92|0)(3\d{2}-?\d{7}|\d{2,3}-?\d{6,8})$/;
+
 interface AuthSession {
   userId: string;
   email: string;
   role: 'ADMIN' | 'STUDENT';
+  lastActive: number;
 }
 
 const activeSessions = new Map<string, AuthSession>();
+const resendCooldowns = new Map<string, number>();
 
 function createSession(user: User): string {
   const token = crypto.randomBytes(32).toString('hex');
   activeSessions.set(token, {
     userId: user.id,
     email: user.email,
-    role: user.role
+    role: user.role,
+    lastActive: Date.now()
   });
   return token;
 }
@@ -72,6 +107,15 @@ function authMiddleware(req: Request, res: Response, next: NextFunction): void {
     return;
   }
 
+  // Sliding Session Renewal (24 hour TTL, auto-refreshes on user activity)
+  const SESSION_TTL = 24 * 60 * 60 * 1000;
+  if (Date.now() - session.lastActive > SESSION_TTL) {
+    activeSessions.delete(token);
+    res.status(401).json({ error: 'Session expired or invalid. Please log in again.' });
+    return;
+  }
+
+  session.lastActive = Date.now();
   (req as any).user = session;
   next();
 }
@@ -304,6 +348,21 @@ app.post('/api/admin/branches', authMiddleware, adminOnly, (req: Request, res: R
     return res.status(400).json({ error: 'All branch fields are required.' });
   }
 
+  const trimmedCity = city.trim();
+  if (!SUPPORTED_CITIES.includes(trimmedCity)) {
+    return res.status(400).json({ error: `Invalid city '${trimmedCity}'. Please select a supported city: ${SUPPORTED_CITIES.join(', ')}` });
+  }
+
+  const trimmedAddress = address.trim();
+  if (trimmedAddress.length < 10) {
+    return res.status(400).json({ error: 'Campus address must be at least 10 characters long.' });
+  }
+
+  const trimmedContact = contactNumber.trim();
+  if (/[a-zA-Z]/.test(trimmedContact) || !/^(\+92|0)[0-9\-\s]{7,14}$/.test(trimmedContact)) {
+    return res.status(400).json({ error: 'Contact number accepts numbers, hyphens, and +92 country code only (e.g. +92-42-1234567 or 061-1234567).' });
+  }
+
   const db = getDb();
   if (db.branches.some(b => b.code.toUpperCase() === code.trim().toUpperCase())) {
     return res.status(400).json({ error: `Branch code '${code}' is already registered.` });
@@ -313,9 +372,9 @@ app.post('/api/admin/branches', authMiddleware, adminOnly, (req: Request, res: R
     id: `br-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     name: name.trim(),
     code: code.trim().toUpperCase(),
-    city: city.trim(),
-    address: address.trim(),
-    contactNumber: contactNumber.trim(),
+    city: trimmedCity,
+    address: trimmedAddress,
+    contactNumber: trimmedContact,
     status: status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
@@ -339,6 +398,30 @@ app.put('/api/admin/branches/:id', authMiddleware, adminOnly, (req: Request, res
     return res.status(404).json({ error: 'Branch not found.' });
   }
 
+  if (city) {
+    const trimmedCity = city.trim();
+    if (!SUPPORTED_CITIES.includes(trimmedCity)) {
+      return res.status(400).json({ error: `Invalid city '${trimmedCity}'. Please select a supported city.` });
+    }
+    branch.city = trimmedCity;
+  }
+
+  if (address) {
+    const trimmedAddress = address.trim();
+    if (trimmedAddress.length < 10) {
+      return res.status(400).json({ error: 'Campus address must be at least 10 characters long.' });
+    }
+    branch.address = trimmedAddress;
+  }
+
+  if (contactNumber) {
+    const trimmedContact = contactNumber.trim();
+    if (/[a-zA-Z]/.test(trimmedContact) || !/^(\+92|0)[0-9\-\s]{7,14}$/.test(trimmedContact)) {
+      return res.status(400).json({ error: 'Contact number accepts numbers, hyphens, and +92 country code only (e.g. +92-42-1234567 or 061-1234567).' });
+    }
+    branch.contactNumber = trimmedContact;
+  }
+
   if (code && code.trim().toUpperCase() !== branch.code) {
     if (db.branches.some(b => b.id !== id && b.code.toUpperCase() === code.trim().toUpperCase())) {
       return res.status(400).json({ error: `Branch code '${code}' already exists.` });
@@ -347,9 +430,6 @@ app.put('/api/admin/branches/:id', authMiddleware, adminOnly, (req: Request, res
   }
 
   if (name) branch.name = name.trim();
-  if (city) branch.city = city.trim();
-  if (address) branch.address = address.trim();
-  if (contactNumber) branch.contactNumber = contactNumber.trim();
   if (status) branch.status = status;
   branch.updatedAt = new Date().toISOString();
 
@@ -424,15 +504,25 @@ app.post('/api/admin/courses', authMiddleware, adminOnly, (req: Request, res: Re
     return res.status(400).json({ error: 'Course code, title, credit hours, and department are required.' });
   }
 
+  const normalizedCode = code.trim().toUpperCase();
+  if (!COURSE_CODE_REGEX.test(normalizedCode)) {
+    return res.status(400).json({ error: 'Use a valid course code such as CS101 or MTH101 (2-6 uppercase letters followed by 3-4 digits).' });
+  }
+
+  const trimmedTitle = title.trim();
+  if (trimmedTitle.length < 3) {
+    return res.status(400).json({ error: 'Course title must be at least 3 characters long.' });
+  }
+
   const db = getDb();
-  if (db.courses.some(c => c.code.toUpperCase() === code.trim().toUpperCase())) {
-    return res.status(400).json({ error: `Course code '${code}' already exists.` });
+  if (db.courses.some(c => c.code.trim().toUpperCase() === normalizedCode)) {
+    return res.status(400).json({ error: `Course code '${normalizedCode}' already exists.` });
   }
 
   const newCourse = {
-    id: `crs-${code.trim().toLowerCase()}-${Date.now().toString(36)}`,
-    code: code.trim().toUpperCase(),
-    title: title.trim(),
+    id: `crs-${normalizedCode.toLowerCase()}-${Date.now().toString(36)}`,
+    code: normalizedCode,
+    title: trimmedTitle,
     creditHours: Number(creditHours),
     department: department.trim(),
     status: status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
@@ -457,14 +547,27 @@ app.put('/api/admin/courses/:id', authMiddleware, adminOnly, (req: Request, res:
     return res.status(404).json({ error: 'Course not found.' });
   }
 
-  if (code && code.trim().toUpperCase() !== course.code) {
-    if (db.courses.some(c => c.id !== id && c.code.toUpperCase() === code.trim().toUpperCase())) {
-      return res.status(400).json({ error: `Course code '${code}' already exists.` });
+  if (code) {
+    const normalizedCode = code.trim().toUpperCase();
+    if (!COURSE_CODE_REGEX.test(normalizedCode)) {
+      return res.status(400).json({ error: 'Use a valid course code such as CS101 or MTH101.' });
     }
-    course.code = code.trim().toUpperCase();
+    if (normalizedCode !== course.code) {
+      if (db.courses.some(c => c.id !== id && c.code.trim().toUpperCase() === normalizedCode)) {
+        return res.status(400).json({ error: `Course code '${normalizedCode}' already exists.` });
+      }
+      course.code = normalizedCode;
+    }
   }
 
-  if (title) course.title = title.trim();
+  if (title) {
+    const trimmedTitle = title.trim();
+    if (trimmedTitle.length < 3) {
+      return res.status(400).json({ error: 'Course title must be at least 3 characters long.' });
+    }
+    course.title = trimmedTitle;
+  }
+
   if (creditHours !== undefined) course.creditHours = Number(creditHours);
   if (department) course.department = department.trim();
   if (status) course.status = status;
@@ -484,11 +587,13 @@ app.delete('/api/admin/courses/:id', authMiddleware, adminOnly, (req: Request, r
     return res.status(404).json({ error: 'Course not found.' });
   }
 
-  // Check if assigned to any student
-  const isAssigned = db.students.some(s => s.assignedCourseIds.includes(id));
-  if (isAssigned) {
+  // Check if assigned to any student or selected in slots
+  const isAssigned = db.students.some(s => s.assignedCourseIds && s.assignedCourseIds.includes(id));
+  const hasSelections = db.selections.some(sel => sel.courseId === id);
+
+  if (isAssigned || hasSelections) {
     return res.status(400).json({
-      error: 'Cannot delete course that is currently assigned to students. Deassign it first or mark INACTIVE.'
+      error: `Cannot delete course '${course.code}: ${course.title}' because it is assigned to students or has active student exam slot selections. Deassign it first or mark as INACTIVE.`
     });
   }
 
@@ -496,7 +601,7 @@ app.delete('/api/admin/courses/:id', authMiddleware, adminOnly, (req: Request, r
   db.slots = db.slots.filter(s => s.courseId !== id);
   saveDb();
   logAudit((req as any).user.email, 'DELETE_COURSE', course.code);
-  res.json({ message: 'Course deleted successfully.' });
+  res.json({ message: `Course ${course.code} deleted successfully.` });
 });
 
 // ----------------- ADMIN STUDENT MANAGEMENT -----------------
@@ -553,32 +658,91 @@ app.post('/api/admin/students', authMiddleware, adminOnly, async (req: Request, 
       cgpa
     } = req.body;
 
-    // Minimum fields validation across 3 groups
-    if (!fullName || !email || !phone || !cnic || !dob || !gender || !address) {
-      return res.status(400).json({ error: 'All Personal group fields are required.' });
+    // 1. Personal Group Validation
+    if (!fullName || fullName.trim().length < 3) {
+      return res.status(400).json({ error: 'Full name is required and must be at least 3 characters.' });
     }
-    if (!fatherName || !parentCnic || !parentOccupation || !parentPhone || !emergencyContact) {
-      return res.status(400).json({ error: 'All Parent/Guardian group fields are required.' });
+    const trimmedEmail = (email || '').trim().toLowerCase();
+    if (!EMAIL_REGEX.test(trimmedEmail)) {
+      return res.status(400).json({ error: 'Please enter a valid email address (e.g., student@student.examslot.edu).' });
     }
-    if (!regNumber || !program || !semester || !sessionBatch || !prevQual || !prevInstitute || cgpa === undefined) {
-      return res.status(400).json({ error: 'All Academic group fields are required.' });
+    const trimmedPhone = (phone || '').trim();
+    if (/[a-zA-Z]/.test(trimmedPhone) || !PAK_PHONE_REGEX.test(trimmedPhone)) {
+      return res.status(400).json({ error: 'Please enter a valid Pakistani phone number (e.g., +92-300-1234567 or 0300-1234567).' });
+    }
+    const trimmedCnic = (cnic || '').trim();
+    if (/[a-zA-Z]/.test(trimmedCnic) || !CNIC_REGEX.test(trimmedCnic)) {
+      return res.status(400).json({ error: 'Please enter a valid 13-digit CNIC format (e.g., 35202-1234567-1).' });
+    }
+    if (!dob) {
+      return res.status(400).json({ error: 'Date of birth is required.' });
+    }
+    const trimmedAddress = (address || '').trim();
+    if (trimmedAddress.length < 15) {
+      return res.status(400).json({ error: 'Student address must be at least 15 characters including street, area, and city.' });
+    }
+
+    // 2. Parent / Guardian Group Validation
+    if (!fatherName || fatherName.trim().length < 3) {
+      return res.status(400).json({ error: 'Father/Guardian name is required (min 3 characters).' });
+    }
+    const trimmedParentCnic = (parentCnic || '').trim();
+    if (/[a-zA-Z]/.test(trimmedParentCnic) || !CNIC_REGEX.test(trimmedParentCnic)) {
+      return res.status(400).json({ error: 'Parent CNIC must be a valid 13-digit format (e.g., 35202-9876543-1).' });
+    }
+    const trimmedParentPhone = (parentPhone || '').trim();
+    if (/[a-zA-Z]/.test(trimmedParentPhone) || !PAK_PHONE_REGEX.test(trimmedParentPhone)) {
+      return res.status(400).json({ error: 'Parent phone number must be a valid Pakistani phone format.' });
+    }
+    const trimmedEmergency = (emergencyContact || '').trim();
+    if (/[a-zA-Z]/.test(trimmedEmergency) || !PAK_PHONE_REGEX.test(trimmedEmergency)) {
+      return res.status(400).json({ error: 'Emergency contact must be a valid Pakistani phone number.' });
+    }
+    if (!parentOccupation || parentOccupation.trim().length < 2) {
+      return res.status(400).json({ error: 'Parent occupation is required.' });
+    }
+
+    // 3. Academic Profile Group Validation
+    const trimmedRegNumber = (regNumber || '').trim().toUpperCase();
+    if (!trimmedRegNumber || trimmedRegNumber.length < 4) {
+      return res.status(400).json({ error: 'Registration number is required (min 4 characters).' });
+    }
+    if (!program || program.trim().length < 3) {
+      return res.status(400).json({ error: 'Degree program is required.' });
+    }
+    const numSemester = Number(semester);
+    if (!numSemester || numSemester < 1 || numSemester > 8) {
+      return res.status(400).json({ error: 'Semester must be between 1 and 8.' });
+    }
+    if (!sessionBatch || sessionBatch.trim().length < 3) {
+      return res.status(400).json({ error: 'Batch/Session is required (e.g. Fall 2026).' });
+    }
+    if (!prevQual || prevQual.trim().length < 2) {
+      return res.status(400).json({ error: 'Previous Qualification is required (e.g. FSc Pre-Engineering / A-Levels).' });
+    }
+    if (!prevInstitute || prevInstitute.trim().length < 3) {
+      return res.status(400).json({ error: 'Previous Institute name is required.' });
+    }
+    const numCgpa = Number(cgpa);
+    if (isNaN(numCgpa) || numCgpa < 0 || numCgpa > 4.0) {
+      return res.status(400).json({ error: 'Current CGPA / Previous Marks must be between 0.0 and 4.0.' });
     }
 
     const db = getDb();
-    if (db.users.some(u => u.email.toLowerCase() === email.trim().toLowerCase())) {
-      return res.status(400).json({ error: `A student with email '${email}' already exists.` });
+    if (db.users.some(u => u.email.toLowerCase() === trimmedEmail)) {
+      return res.status(400).json({ error: `A student with email '${trimmedEmail}' already exists.` });
     }
-    if (db.students.some(s => s.regNumber.toUpperCase() === regNumber.trim().toUpperCase())) {
-      return res.status(400).json({ error: `Registration number '${regNumber}' is already in use.` });
+    if (db.students.some(s => s.regNumber.toUpperCase() === trimmedRegNumber)) {
+      return res.status(400).json({ error: `Registration number '${trimmedRegNumber}' is already in use.` });
     }
-    if (db.students.some(s => s.cnic === cnic.trim())) {
-      return res.status(400).json({ error: `CNIC '${cnic}' is already in use.` });
+    if (db.students.some(s => s.cnic === trimmedCnic)) {
+      return res.status(400).json({ error: `CNIC '${trimmedCnic}' is already in use.` });
     }
 
     const userId = `user-stu-${Date.now()}`;
     const newUser: User = {
       id: userId,
-      email: email.trim().toLowerCase(),
+      email: trimmedEmail,
       role: 'STUDENT',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -589,27 +753,27 @@ app.post('/api/admin/students', authMiddleware, adminOnly, async (req: Request, 
       id: studentId,
       userId,
       fullName: fullName.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone.trim(),
-      cnic: cnic.trim(),
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      cnic: trimmedCnic,
       dob,
       gender,
-      address: address.trim(),
+      address: trimmedAddress,
       photoUrl: photoUrl || undefined,
 
       fatherName: fatherName.trim(),
-      parentCnic: parentCnic.trim(),
+      parentCnic: trimmedParentCnic,
       parentOccupation: parentOccupation.trim(),
-      parentPhone: parentPhone.trim(),
-      emergencyContact: emergencyContact.trim(),
+      parentPhone: trimmedParentPhone,
+      emergencyContact: trimmedEmergency,
 
-      regNumber: regNumber.trim().toUpperCase(),
+      regNumber: trimmedRegNumber,
       program: program.trim(),
-      semester: Number(semester),
+      semester: numSemester,
       sessionBatch: sessionBatch.trim(),
       prevQual: prevQual.trim(),
       prevInstitute: prevInstitute.trim(),
-      cgpa: Number(cgpa),
+      cgpa: numCgpa,
 
       branchId: null,
       isBranchSelected: false,
@@ -626,16 +790,16 @@ app.post('/api/admin/students', authMiddleware, adminOnly, async (req: Request, 
     saveDb();
 
     // Account creation email flow: Single-use, 24-hr time-limited token
-    const tokenRecord = createPasswordToken(userId, email.trim().toLowerCase());
+    const tokenRecord = createPasswordToken(userId, trimmedEmail);
     sendEmail({
-      to: email.trim().toLowerCase(),
+      to: trimmedEmail,
       subject: 'ExamSlot Portal - Account Created & Password Setup',
       body: `Hello ${fullName},\n\nYour student portal account has been created for ${program}. Please click the secure link below to set your password. This link is single-use and will expire in 24 hours.\n\nPasswords are never stored in plain text.`,
       link: `/set-password?token=${tokenRecord.token}`,
       type: 'PASSWORD_SETUP'
     });
 
-    logAudit((req as any).user.email, 'CREATE_STUDENT', `${fullName} (${regNumber})`, `Email token generated.`);
+    logAudit((req as any).user.email, 'CREATE_STUDENT', `${fullName} (${trimmedRegNumber})`, `Email token generated.`);
 
     res.status(201).json({
       student: newStudent,
@@ -690,6 +854,15 @@ app.post('/api/admin/students/:id/resend-invite', authMiddleware, adminOnly, (re
   if (!student) {
     return res.status(404).json({ error: 'Student not found.' });
   }
+
+  // 60-second cooldown protection against spamming resend link
+  const lastSent = resendCooldowns.get(id);
+  const now = Date.now();
+  if (lastSent && now - lastSent < 60000) {
+    const secondsLeft = Math.ceil((60000 - (now - lastSent)) / 1000);
+    return res.status(429).json({ error: `Please wait ${secondsLeft} second(s) before sending another password setup link.` });
+  }
+  resendCooldowns.set(id, now);
 
   const tokenRecord = createPasswordToken(student.userId, student.email);
   sendEmail({

@@ -13,6 +13,23 @@ import { api } from '../../api/client.ts';
 import { Course } from '../../types/index.ts';
 import { Pagination } from '../common/Pagination.tsx';
 
+const OFFICIAL_COURSE_CATALOG = [
+  { code: 'CS101', title: 'Introduction to Computing & Algorithms', creditHours: 3, department: 'Computer Science' },
+  { code: 'CS201', title: 'Object-Oriented Programming (C++ & Java)', creditHours: 4, department: 'Computer Science' },
+  { code: 'CS301', title: 'Data Structures and Algorithms', creditHours: 3, department: 'Computer Science' },
+  { code: 'CS304', title: 'Database Management Systems', creditHours: 3, department: 'Software Engineering' },
+  { code: 'SE101', title: 'Introduction to Software Engineering', creditHours: 3, department: 'Software Engineering' },
+  { code: 'SE202', title: 'Software Architecture and Design', creditHours: 3, department: 'Software Engineering' },
+  { code: 'SE303', title: 'Software Quality Assurance & Testing', creditHours: 3, department: 'Software Engineering' },
+  { code: 'MTH101', title: 'Calculus and Analytical Geometry', creditHours: 3, department: 'Mathematics' },
+  { code: 'MTH201', title: 'Linear Algebra & Differential Equations', creditHours: 3, department: 'Mathematics' },
+  { code: 'PHY101', title: 'Applied Physics & Electromagnetism', creditHours: 3, department: 'Basic Sciences' },
+  { code: 'ENG101', title: 'English Comprehension & Technical Writing', creditHours: 3, department: 'Humanities' },
+  { code: 'MGT201', title: 'Financial Accounting & Management', creditHours: 3, department: 'Management Sciences' }
+];
+
+const COURSE_CODE_REGEX = /^[A-Z]{2,6}[0-9]{3,4}$/;
+
 export const CourseManagement: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -26,6 +43,7 @@ export const CourseManagement: React.FC = () => {
   // Modal
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [selectedCatalogCode, setSelectedCatalogCode] = useState<string>('');
   const [formData, setFormData] = useState({
     code: '',
     title: '',
@@ -35,6 +53,7 @@ export const CourseManagement: React.FC = () => {
   });
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchCourses = async (page = currentPage, query = search, dept = departmentFilter) => {
@@ -59,6 +78,7 @@ export const CourseManagement: React.FC = () => {
 
   const handleOpenCreate = () => {
     setEditingCourse(null);
+    setSelectedCatalogCode('');
     setFormData({
       code: '',
       title: '',
@@ -72,6 +92,8 @@ export const CourseManagement: React.FC = () => {
 
   const handleOpenEdit = (course: Course) => {
     setEditingCourse(course);
+    const catalogMatch = OFFICIAL_COURSE_CATALOG.find(c => c.code === course.code);
+    setSelectedCatalogCode(catalogMatch ? catalogMatch.code : 'CUSTOM');
     setFormData({
       code: course.code,
       title: course.title,
@@ -83,18 +105,79 @@ export const CourseManagement: React.FC = () => {
     setModalOpen(true);
   };
 
+  const handleCatalogSelect = (code: string) => {
+    setSelectedCatalogCode(code);
+    if (code === 'CUSTOM') {
+      setFormData(prev => ({ ...prev, code: '', title: '' }));
+      return;
+    }
+    const item = OFFICIAL_COURSE_CATALOG.find(c => c.code === code);
+    if (item) {
+      setFormData(prev => ({
+        ...prev,
+        code: item.code,
+        title: item.title,
+        creditHours: item.creditHours,
+        department: item.department
+      }));
+      setFormError(null);
+    }
+  };
+
+  const handleCodeInput = (inputCode: string) => {
+    const uppercaseCode = inputCode.trim().toUpperCase();
+    const catalogItem = OFFICIAL_COURSE_CATALOG.find(c => c.code === uppercaseCode);
+    if (catalogItem) {
+      setSelectedCatalogCode(catalogItem.code);
+      setFormData(prev => ({
+        ...prev,
+        code: uppercaseCode,
+        title: catalogItem.title,
+        creditHours: catalogItem.creditHours,
+        department: catalogItem.department
+      }));
+    } else {
+      setSelectedCatalogCode('CUSTOM');
+      setFormData(prev => ({
+        ...prev,
+        code: uppercaseCode
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setFormError(null);
 
+    const formattedCode = formData.code.trim().toUpperCase();
+    if (!COURSE_CODE_REGEX.test(formattedCode)) {
+      setFormError('Use a valid course code such as CS101 or MTH101 (2-6 letters followed by 3-4 digits).');
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.title.trim() || formData.title.trim().length < 3) {
+      setFormError('Course title must be at least 3 characters long.');
+      setSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      code: formattedCode,
+      title: formData.title.trim(),
+      creditHours: formData.creditHours,
+      department: formData.department,
+      status: formData.status
+    };
+
     try {
       if (editingCourse) {
-        await api.updateCourse(editingCourse.id, formData);
-        setAlertMessage({ type: 'success', text: `Course '${formData.code}' updated successfully.` });
+        await api.updateCourse(editingCourse.id, payload);
+        setAlertMessage({ type: 'success', text: `Course '${formattedCode}' updated successfully.` });
       } else {
-        await api.createCourse(formData);
-        setAlertMessage({ type: 'success', text: `Course '${formData.code}' created successfully.` });
+        await api.createCourse(payload);
+        setAlertMessage({ type: 'success', text: `Course '${formattedCode}' created successfully.` });
       }
       setModalOpen(false);
       fetchCourses(currentPage, search, departmentFilter);
@@ -106,16 +189,21 @@ export const CourseManagement: React.FC = () => {
   };
 
   const handleDelete = async (course: Course) => {
+    if (deletingId) return; // Prevent concurrent requests
+
     if (!window.confirm(`Are you sure you want to delete course '${course.code}: ${course.title}'?`)) {
       return;
     }
 
     try {
-      await api.deleteCourse(course.id);
-      setAlertMessage({ type: 'success', text: `Course ${course.code} removed successfully.` });
+      setDeletingId(course.id);
+      const res = await api.deleteCourse(course.id);
+      setAlertMessage({ type: 'success', text: res.message || `Course ${course.code} removed successfully.` });
       fetchCourses(currentPage, search, departmentFilter);
     } catch (err: any) {
       setAlertMessage({ type: 'error', text: err.message || 'Cannot delete course.' });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -350,19 +438,39 @@ export const CourseManagement: React.FC = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
+                  Searchable Course Catalogue (Auto-fills Title & Dept)
+                </label>
+                <select
+                  value={selectedCatalogCode}
+                  onChange={(e) => handleCatalogSelect(e.target.value)}
+                  className="w-full px-3 py-2 text-xs bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
+                >
+                  <option value="">-- Select from Official Catalogue --</option>
+                  {OFFICIAL_COURSE_CATALOG.map(item => (
+                    <option key={item.code} value={item.code}>
+                      {item.code} - {item.title} ({item.department})
+                    </option>
+                  ))}
+                  <option value="CUSTOM">+ Enter Custom Course Code & Title</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                    Course Code (Unique)
+                    Course Code (Required)
                   </label>
                   <input
                     type="text"
                     value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                    onChange={(e) => handleCodeInput(e.target.value)}
                     placeholder="e.g. CS101"
                     required
                     className="w-full px-3 py-2 text-xs font-mono uppercase bg-[#F7F7F3] dark:bg-slate-800 border border-[#DDE3E8] dark:border-slate-700 rounded-2xl text-[#08090B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8ECCFF]"
                   />
+                  <p className="text-[10px] text-[#68717D] mt-0.5">e.g. CS101, MTH101 (2-6 letters + 3-4 digits)</p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
@@ -383,7 +491,7 @@ export const CourseManagement: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-[#08090B] dark:text-slate-200 mb-1">
-                  Course Title
+                  Official Course Title
                 </label>
                 <input
                   type="text"
