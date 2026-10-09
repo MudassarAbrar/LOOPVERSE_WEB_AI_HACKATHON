@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Printer,
   Download,
   CalendarDays,
   CheckCircle2,
@@ -9,6 +8,7 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { api } from '../../api/client.ts';
+import { ExamSlotIcon } from '../common/ExamSlotLogo.tsx';
 
 interface PrintableDateSheetProps {
   onOpenNeedHelp: () => void;
@@ -183,21 +183,10 @@ export const PrintableDateSheet: React.FC<PrintableDateSheetProps> = ({ onOpenNe
                 LOCKED
               </span>
             </div>
-            <p className="text-xs text-[#68717D] dark:text-slate-400 mt-0.5">
-              Your self-designed exam timetable is saved and ready for printing.
-            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
-            onClick={handlePrint}
-            className="flex-1 sm:flex-none px-4 py-2.5 bg-[#8ECCFF] hover:bg-[#7bc0fa] text-[#08090B] rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95"
-          >
-            <Printer className="w-4 h-4" />
-            <span>Print Date Sheet</span>
-          </button>
-
           <button
             onClick={handleDownloadPdf}
             disabled={pdfGenerating}
@@ -225,12 +214,15 @@ export const PrintableDateSheet: React.FC<PrintableDateSheetProps> = ({ onOpenNe
       >
         {/* Letterhead */}
         <div className="text-center pb-6 border-b-2 border-[#08090B] space-y-1">
-          <div className="flex items-center justify-center gap-2 font-display font-bold text-xl sm:text-2xl text-[#08090B] tracking-tight">
-            <CalendarDays className="w-6 h-6 text-[#16865B]" />
-            VIRTUAL UNIVERSITY OF ADVANCED STUDIES
+          <div className="flex items-center justify-center pb-1">
+            <img
+              src="/examslot-logo.svg"
+              alt="ExamSlot - University Examination Management System"
+              className="h-10 sm:h-12 w-auto object-contain select-none"
+            />
           </div>
           <div className="text-xs uppercase tracking-widest font-bold text-[#68717D]">
-            OFFICE OF THE CONTROLLER OF EXAMINATIONS
+            OFFICE OF THE CONTROLLER OF EXAMINATIONS · VIRTUAL UNIVERSITY
           </div>
           <div className="text-xs font-bold text-[#08090B] bg-[#D9ECF8] inline-block px-4 py-1 rounded-full mt-2">
             OFFICIAL ROLL NUMBER SLIP & SELF-DESIGNED EXAM DATE SHEET · FALL 2026
@@ -316,7 +308,10 @@ export const PrintableDateSheet: React.FC<PrintableDateSheetProps> = ({ onOpenNe
           <div className="flex items-end justify-between pt-6 text-xs text-[#68717D]">
             <div>
               <div>System Hash: <span className="font-mono font-bold text-[#08090B]">ES-VERIFIED-2026-OK</span></div>
-              <div className="text-[10px]">Generated via ExamSlot Self-Service Engine</div>
+              <div className="text-[10px] flex items-center gap-1.5 mt-0.5">
+                <ExamSlotIcon className="w-3.5 h-3.5" />
+                <span>Generated via ExamSlot Self-Service Engine</span>
+              </div>
             </div>
 
             <div className="text-center space-y-1">

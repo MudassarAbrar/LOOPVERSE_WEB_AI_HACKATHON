@@ -220,9 +220,6 @@ export const BranchManagement: React.FC = () => {
             <Building2 className="w-5 h-5 text-[#16865B] dark:text-[#C8F85A]" />
             Campus Branch Management
           </h2>
-          <p className="text-xs text-[#68717D] dark:text-slate-400">
-            Configure examination venues across the country. Students select one active campus to sit papers in.
-          </p>
         </div>
 
         {/* Accent Button matching Section 03 & Section 07 */}

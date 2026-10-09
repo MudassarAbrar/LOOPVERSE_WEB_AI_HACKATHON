@@ -5,7 +5,6 @@ import { LoginPage } from './components/auth/LoginPage.tsx';
 import { SetPasswordPage } from './components/auth/SetPasswordPage.tsx';
 import { AdminLayout } from './components/admin/AdminLayout.tsx';
 import { StudentLayout } from './components/student/StudentLayout.tsx';
-import { ChatWidget } from './components/common/ChatWidget.tsx';
 
 function MainApp() {
   const { user, studentProfile, loading } = useAuth();
@@ -72,13 +71,6 @@ function MainApp() {
           <StudentLayout />
         )}
       </main>
-
-      {/* Floating AI Assistant Chatbot */}
-      {user && <ChatWidget studentId={studentProfile?.id} />}
-
-      <footer className="print:hidden border-t border-[#DDE3E8] dark:border-slate-800 py-4 px-6 text-center text-xs text-[#68717D] dark:text-slate-400 bg-white/70 dark:bg-[#08090B] backdrop-blur-sm transition-colors">
-        ExamSlot Portal · Loopverse 3.0 Hackathon Solution · Virtual University Self-Service Exam Timetable System
-      </footer>
     </div>
   );
 }

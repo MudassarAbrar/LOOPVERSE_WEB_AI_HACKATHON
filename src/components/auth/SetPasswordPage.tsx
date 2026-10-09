@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { api, setStoredToken } from '../../api/client.ts';
 import { useAuth } from '../../context/AuthContext.tsx';
+import { ExamSlotIcon } from '../common/ExamSlotLogo.tsx';
 
 interface SetPasswordPageProps {
   token: string;
@@ -82,8 +83,12 @@ export const SetPasswordPage: React.FC<SetPasswordPageProps> = ({
       <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-[#DDE3E8] dark:border-slate-800 shadow-xl overflow-hidden">
         {/* Banner with Ink Black Background matching design theme */}
         <div className="bg-[#08090B] p-7 text-white text-center border-b border-slate-800">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#C8F85A] text-[#08090B] flex items-center justify-center mb-3 font-bold shadow-sm">
-            <KeyRound className="w-6 h-6 stroke-[2.2]" />
+          <div className="bg-white px-5 py-2.5 rounded-2xl shadow-md inline-flex items-center justify-center mb-3">
+            <img
+              src="/examslot-logo.svg"
+              alt="ExamSlot - University Examination Management System"
+              className="h-9 sm:h-10 w-auto object-contain select-none"
+            />
           </div>
           <h1 className="font-display font-bold text-2xl tracking-tight text-white">
             Set Your Portal Password

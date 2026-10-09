@@ -1,10 +1,16 @@
 import { Resend } from 'resend';
+import dotenv from 'dotenv';
 import { getDb, saveDb } from './db.ts';
 import { EmailLog } from '../src/types/index.ts';
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
-const fromEmail = process.env.EMAIL_FROM || 'ExamSlot Virtual University <onboarding@mudassirbaig.me>';
+dotenv.config();
+
+function getResendClient(): { client: Resend | null; fromEmail: string } {
+  const apiKey = process.env.RESEND_API_KEY;
+  const client = apiKey ? new Resend(apiKey) : null;
+  const fromEmail = process.env.EMAIL_FROM || 'ExamSlot Virtual University <onboarding@mudassirbaig.me>';
+  return { client, fromEmail };
+}
 
 function escapeHtml(str: string): string {
   return str
@@ -56,6 +62,7 @@ export function sendEmail({
   console.log(`[EMAIL DISPATCH] To: ${to} | Subject: ${subject} | Link: ${link || 'N/A'}`);
 
   // Dispatch real email via Resend API if API Key is configured
+  const { client: resend, fromEmail } = getResendClient();
   if (resend) {
     const safeBody = escapeHtml(body);
     const safeLink = sanitizeUrl(link);

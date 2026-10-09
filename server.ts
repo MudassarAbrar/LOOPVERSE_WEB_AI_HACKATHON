@@ -1244,14 +1244,20 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
     const session = (req as any).user as AuthSession;
     const db = getDb();
     let targetStudentId = '';
+    let studentInfoText = '';
 
     if (session.role === 'STUDENT') {
       const studentProfile = db.students.find(s => s.userId === session.userId);
       if (studentProfile) {
         targetStudentId = studentProfile.id;
+        studentInfoText = `Currently logged in student: ID "${studentProfile.id}", Name "${studentProfile.fullName}", Registration No "${studentProfile.regNumber}", Program "${studentProfile.program}". When invoking tools like getMyAssignedCourses or checkScheduleConflicts for this student, always use studentId "${studentProfile.id}".`;
       }
     } else if (session.role === 'ADMIN' && req.body.studentId) {
       targetStudentId = req.body.studentId;
+      const studentProfile = db.students.find(s => s.id === targetStudentId);
+      if (studentProfile) {
+        studentInfoText = `Target student context: ID "${studentProfile.id}", Name "${studentProfile.fullName}", Registration No "${studentProfile.regNumber}".`;
+      }
     }
 
     const aiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -1259,12 +1265,14 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in server environment.' });
     }
 
-    const MODEL_NAME = 'gemini-2.0-flash';
+    const MODEL_NAME = 'gemini-flash-latest';
+    const FALLBACK_MODEL = 'gemini-3.1-flash-lite';
     const ai = new GoogleGenAI({ apiKey: aiApiKey });
     const systemInstruction = `
       You are the Virtual University ExamSlot AI Assistant.
       Your goal is to provide accurate, real-time help to students about active campuses/branches, course exam slots, seat capacity, assigned courses, time conflicts, and date sheet policies.
-      CRITICAL INSTRUCTION: NEVER guess, hallucinate, or invent data. ALWAYS use the provided live database tools to query real data before answering student queries.
+      ${studentInfoText}
+      CRITICAL INSTRUCTION: NEVER guess, hallucinate, or invent data. ALWAYS use the provided live database tools to query real data before answering student queries. If the student asks about their courses, slots, or conflicts, call the corresponding database tool immediately.
     `;
 
     const generationConfig = {
@@ -1272,9 +1280,24 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
       tools: [{ functionDeclarations: examSlotTools }],
     };
 
+    // Helper to generate content with fallback model resilience
+    const generateWithFallback = async (params: { contents: any[]; config: any }) => {
+      try {
+        return await ai.models.generateContent({
+          model: MODEL_NAME,
+          ...params
+        });
+      } catch (err: any) {
+        console.warn(`[GEMINI PRIMARY MODEL FAILED: ${MODEL_NAME}] Falling back to ${FALLBACK_MODEL}`, err?.message);
+        return await ai.models.generateContent({
+          model: FALLBACK_MODEL,
+          ...params
+        });
+      }
+    };
+
     // 1. Initial call to Gemini
-    const initialResponse = await ai.models.generateContent({
-      model: MODEL_NAME,
+    const initialResponse = await generateWithFallback({
       contents: messages,
       config: generationConfig,
     });
@@ -1309,8 +1332,7 @@ app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
       }
 
       // 3. Send model turn + function responses back preserving systemInstruction and generation config
-      const followUpResponse = await ai.models.generateContent({
-        model: MODEL_NAME,
+      const followUpResponse = await generateWithFallback({
         contents: [
           ...messages,
           initialCandidateContent,

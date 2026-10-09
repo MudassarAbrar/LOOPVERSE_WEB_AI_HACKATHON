@@ -47,6 +47,20 @@
       "role": "STUDENT",
       "createdAt": "2026-10-09T07:03:51.030Z",
       "updatedAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "user-stu-1791543594527",
+      "email": "testdiagstudent1@student.examslot.edu",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T10:59:54.527Z",
+      "updatedAt": "2026-10-09T10:59:54.527Z"
+    },
+    {
+      "id": "user-stu-1791544137369",
+      "email": "zubair.ahmed.verified@student.examslot.edu",
+      "role": "STUDENT",
+      "createdAt": "2026-10-09T11:08:57.369Z",
+      "updatedAt": "2026-10-09T11:08:57.369Z"
     }
   ],
   "passwordTokens": [
@@ -58,6 +72,24 @@
       "expiresAt": "2026-10-10T07:03:51.030Z",
       "isUsed": false,
       "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "token-1791543594527-qvg4",
+      "userId": "user-stu-1791543594527",
+      "email": "testdiagstudent1@student.examslot.edu",
+      "token": "7cb6634bda7725171ab99a1850a52878cb132c72ab796c15",
+      "expiresAt": "2026-10-10T10:59:54.527Z",
+      "isUsed": false,
+      "createdAt": "2026-10-09T10:59:54.527Z"
+    },
+    {
+      "id": "token-1791544137370-r5mk",
+      "userId": "user-stu-1791544137369",
+      "email": "zubair.ahmed.verified@student.examslot.edu",
+      "token": "96d1530a8be2532cd1ac4e1a27a576adc780c418f9fa4cbf",
+      "expiresAt": "2026-10-10T11:08:57.370Z",
+      "isUsed": false,
+      "createdAt": "2026-10-09T11:08:57.370Z"
     }
   ],
   "branches": [
@@ -190,6 +222,68 @@
   ],
   "students": [
     {
+      "id": "stu-1791544137369",
+      "userId": "user-stu-1791544137369",
+      "fullName": "Zubair Ahmed",
+      "email": "zubair.ahmed.verified@student.examslot.edu",
+      "phone": "+923005544332",
+      "cnic": "35201-8877665-3",
+      "dob": "2004-03-21",
+      "gender": "Male",
+      "address": "Model Town Lahore",
+      "fatherName": "Ahmed Raza",
+      "parentCnic": "35201-1122334-9",
+      "parentOccupation": "Engineer",
+      "parentPhone": "+923009988776",
+      "emergencyContact": "+923009988776",
+      "regNumber": "BC20268899",
+      "program": "BS Computer Science",
+      "semester": 1,
+      "sessionBatch": "Fall 2026",
+      "prevQual": "HSSC",
+      "prevInstitute": "KIPS College",
+      "cgpa": 3.6,
+      "branchId": null,
+      "isBranchSelected": false,
+      "isDateSheetSaved": false,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [],
+      "createdAt": "2026-10-09T11:08:57.369Z",
+      "updatedAt": "2026-10-09T11:08:57.369Z"
+    },
+    {
+      "id": "stu-1791543594527",
+      "userId": "user-stu-1791543594527",
+      "fullName": "Test Diagnostic Student",
+      "email": "testdiagstudent1@student.examslot.edu",
+      "phone": "+923001234567",
+      "cnic": "35201-9988776-1",
+      "dob": "2004-01-15",
+      "gender": "Male",
+      "address": "Lahore test address",
+      "fatherName": "Father Name",
+      "parentCnic": "35201-1122334-1",
+      "parentOccupation": "Business",
+      "parentPhone": "+923007654321",
+      "emergencyContact": "+923007654321",
+      "regNumber": "BCTEST9999",
+      "program": "BS Computer Science",
+      "semester": 1,
+      "sessionBatch": "Fall 2026",
+      "prevQual": "HSSC",
+      "prevInstitute": "PGC",
+      "cgpa": 3.5,
+      "branchId": null,
+      "isBranchSelected": false,
+      "isDateSheetSaved": false,
+      "branchUnlocked": false,
+      "dateSheetUnlocked": false,
+      "assignedCourseIds": [],
+      "createdAt": "2026-10-09T10:59:54.527Z",
+      "updatedAt": "2026-10-09T10:59:54.527Z"
+    },
+    {
       "id": "stu-1",
       "userId": "user-stu-1",
       "fullName": "Ali Khan",
@@ -214,7 +308,7 @@
       "branchId": "br-lahore-1",
       "branchName": "Lahore Central Campus",
       "isBranchSelected": true,
-      "isDateSheetSaved": false,
+      "isDateSheetSaved": true,
       "branchUnlocked": false,
       "dateSheetUnlocked": false,
       "assignedCourseIds": [
@@ -225,7 +319,7 @@
         "crs-mth101"
       ],
       "createdAt": "2026-10-09T07:03:51.030Z",
-      "updatedAt": "2026-10-09T07:03:51.030Z"
+      "updatedAt": "2026-10-09T07:53:52.454Z"
     },
     {
       "id": "stu-2",
@@ -728,6 +822,41 @@
       "courseId": "crs-eng101",
       "slotId": "slot-eng101-a1",
       "createdAt": "2026-10-09T07:03:51.030Z"
+    },
+    {
+      "id": "sel-stu-1-crs-cs101",
+      "studentId": "stu-1",
+      "courseId": "crs-cs101",
+      "slotId": "slot-cs101-a1",
+      "createdAt": "2026-10-09T07:53:52.454Z"
+    },
+    {
+      "id": "sel-stu-1-crs-cs201",
+      "studentId": "stu-1",
+      "courseId": "crs-cs201",
+      "slotId": "slot-cs201-a1",
+      "createdAt": "2026-10-09T07:53:52.454Z"
+    },
+    {
+      "id": "sel-stu-1-crs-cs301",
+      "studentId": "stu-1",
+      "courseId": "crs-cs301",
+      "slotId": "slot-cs301-m1",
+      "createdAt": "2026-10-09T07:53:52.454Z"
+    },
+    {
+      "id": "sel-stu-1-crs-cs304",
+      "studentId": "stu-1",
+      "courseId": "crs-cs304",
+      "slotId": "slot-cs304-m2",
+      "createdAt": "2026-10-09T07:53:52.454Z"
+    },
+    {
+      "id": "sel-stu-1-crs-mth101",
+      "studentId": "stu-1",
+      "courseId": "crs-mth101",
+      "slotId": "slot-mth101-m1",
+      "createdAt": "2026-10-09T07:53:52.454Z"
     }
   ],
   "requests": [
@@ -758,6 +887,22 @@
   ],
   "auditLogs": [
     {
+      "id": "audit-1791544137371-qbvq6",
+      "adminEmail": "admin@examslot.edu",
+      "action": "CREATE_STUDENT",
+      "target": "Zubair Ahmed (BC20268899)",
+      "details": "Email token generated.",
+      "timestamp": "2026-10-09T11:08:57.371Z"
+    },
+    {
+      "id": "audit-1791543594530-4cyc8",
+      "adminEmail": "admin@examslot.edu",
+      "action": "CREATE_STUDENT",
+      "target": "Test Diagnostic Student (BCTEST9999)",
+      "details": "Email token generated.",
+      "timestamp": "2026-10-09T10:59:54.530Z"
+    },
+    {
       "id": "audit-1",
       "adminEmail": "admin@examslot.edu",
       "action": "SYSTEM_SEED",
@@ -776,6 +921,26 @@
   ],
   "emails": [
     {
+      "id": "email-1791544137370-e3ej",
+      "to": "zubair.ahmed.verified@student.examslot.edu",
+      "subject": "ExamSlot Portal - Account Created & Password Setup",
+      "body": "Hello Zubair Ahmed,\n\nYour student portal account has been created for BS Computer Science. Please click the secure link below to set your password. This link is single-use and will expire in 24 hours.\n\nPasswords are never stored in plain text.",
+      "link": "/set-password?token=96d1530a8be2532cd1ac4e1a27a576adc780c418f9fa4cbf",
+      "type": "PASSWORD_SETUP",
+      "timestamp": "2026-10-09T11:08:57.370Z",
+      "read": false
+    },
+    {
+      "id": "email-1791543594528-o27e",
+      "to": "testdiagstudent1@student.examslot.edu",
+      "subject": "ExamSlot Portal - Account Created & Password Setup",
+      "body": "Hello Test Diagnostic Student,\n\nYour student portal account has been created for BS Computer Science. Please click the secure link below to set your password. This link is single-use and will expire in 24 hours.\n\nPasswords are never stored in plain text.",
+      "link": "/set-password?token=7cb6634bda7725171ab99a1850a52878cb132c72ab796c15",
+      "type": "PASSWORD_SETUP",
+      "timestamp": "2026-10-09T10:59:54.528Z",
+      "read": false
+    },
+    {
       "id": "email-welcome-1",
       "to": "ali.khan@student.examslot.edu",
       "subject": "Welcome to ExamSlot Portal - Account Setup",
@@ -783,7 +948,7 @@
       "link": "/set-password?token=demo-token-ali-khan-1",
       "type": "PASSWORD_SETUP",
       "timestamp": "2026-10-09T07:03:51.030Z",
-      "read": false
+      "read": true
     },
     {
       "id": "email-req-approved",

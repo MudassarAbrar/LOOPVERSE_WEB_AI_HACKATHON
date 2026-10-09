@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { api } from '../../api/client.ts';
+import { ExamSlotIcon } from '../common/ExamSlotLogo.tsx';
 
 interface LoginPageProps {
   onOpenPasswordSetup?: (token: string) => void;
@@ -78,15 +79,15 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
       <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-[#DDE3E8] dark:border-slate-800 shadow-xl overflow-hidden">
         {/* Banner with Ink Black Background matching design theme */}
         <div className="bg-[#08090B] p-7 text-white text-center border-b border-slate-800">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#C8F85A] text-[#08090B] flex items-center justify-center mb-3 font-bold shadow-sm">
-            <CalendarDays className="w-6 h-6 stroke-[2.2]" />
+          <div className="flex flex-col items-center justify-center">
+            <div className="bg-white px-5 py-2.5 rounded-2xl shadow-md inline-flex items-center justify-center mb-1">
+              <img
+                src="/examslot-logo.svg"
+                alt="ExamSlot - University Examination Management System"
+                className="h-10 sm:h-11 w-auto object-contain select-none"
+              />
+            </div>
           </div>
-          <h1 className="font-display font-bold text-2xl tracking-tight text-white">
-            Exam<span className="text-[#C8F85A]">Slot</span> Portal
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            University Examination Management System
-          </p>
 
           {/* Role selector tabs */}
           <div className="mt-5 grid grid-cols-2 p-1 bg-white/10 rounded-2xl">
@@ -133,11 +134,6 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
             <h2 className="font-display font-bold text-xl text-[#08090B] dark:text-white">
               {activeTab === 'student' ? 'Student Sign In' : 'Administrative Controller Login'}
             </h2>
-            <p className="text-xs text-[#68717D] dark:text-slate-400 mt-0.5">
-              {activeTab === 'student'
-                ? 'Sign in to configure branch, choose dates and print date sheet.'
-                : 'Manage university branches, courses, and review student requests.'}
-            </p>
           </div>
 
           {error && (

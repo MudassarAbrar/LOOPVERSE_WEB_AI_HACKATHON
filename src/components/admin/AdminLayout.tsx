@@ -10,7 +10,8 @@ import {
   Layers,
   Search,
   Bell,
-  ChevronDown
+  ChevronDown,
+  Bot
 } from 'lucide-react';
 import { AdminDashboard } from './AdminDashboard.tsx';
 import { BranchManagement } from './BranchManagement.tsx';
@@ -21,10 +22,12 @@ import { ExamScheduleManagement } from './ExamScheduleManagement.tsx';
 import { StudentRequestsReview } from './StudentRequestsReview.tsx';
 import { AdminAuditLogs } from './AdminAuditLogs.tsx';
 import { StudentProfile } from '../../types/index.ts';
+import { ExamSlotLogo } from '../common/ExamSlotLogo.tsx';
+import { AiAssistantView } from '../common/AiAssistantView.tsx';
 
 export const AdminLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'branches' | 'courses' | 'students' | 'schedules' | 'requests' | 'audit'
+    'dashboard' | 'branches' | 'courses' | 'students' | 'schedules' | 'requests' | 'audit' | 'assistant'
   >('dashboard');
 
   const [assigningStudent, setAssigningStudent] = useState<StudentProfile | null>(null);
@@ -36,7 +39,8 @@ export const AdminLayout: React.FC = () => {
     { id: 'students', label: 'Students', icon: Users },
     { id: 'schedules', label: 'Exam Schedules', icon: Calendar },
     { id: 'requests', label: 'Change Requests', icon: HelpCircle },
-    { id: 'audit', label: 'Audit Trail', icon: Shield }
+    { id: 'audit', label: 'Audit Trail', icon: Shield },
+    { id: 'assistant', label: 'AI Assistant', icon: Bot }
   ];
 
   return (
@@ -44,13 +48,8 @@ export const AdminLayout: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Section 06: SIDEBAR NAVIGATION */}
         <aside className="lg:col-span-3 bg-[#08090B] dark:bg-slate-900 text-white rounded-3xl p-5 shadow-lg border border-slate-800">
-          <div className="flex items-center gap-2 mb-6 px-2">
-            <div className="w-8 h-8 rounded-lg bg-[#C8F85A] flex items-center justify-center text-[#08090B] font-bold text-sm">
-              ES
-            </div>
-            <span className="font-display font-bold text-lg text-white">
-              Exam<span className="text-[#C8F85A]">Slot</span>
-            </span>
+          <div className="mb-6 px-1">
+            <ExamSlotLogo iconClassName="w-8 h-8" lightText={true} />
           </div>
 
           <div className="text-[11px] font-bold text-[#68717D] uppercase tracking-wider px-3 mb-2 font-ui">
@@ -140,6 +139,7 @@ export const AdminLayout: React.FC = () => {
             {activeTab === 'schedules' && <ExamScheduleManagement />}
             {activeTab === 'requests' && <StudentRequestsReview />}
             {activeTab === 'audit' && <AdminAuditLogs />}
+            {activeTab === 'assistant' && <AiAssistantView />}
           </div>
         </main>
       </div>
