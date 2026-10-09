@@ -100,8 +100,19 @@ try {
 
 const resendCooldowns = new Map<string, number>();
 
+const SESSION_SECRET = process.env.JWT_SECRET || 'examslot-secret-key-2026-hackathon';
+
 function createSession(user: User): string {
-  const token = crypto.randomBytes(32).toString('hex');
+  const payload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    createdAt: Date.now()
+  };
+  const dataStr = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = crypto.createHmac('sha256', SESSION_SECRET).update(dataStr).digest('base64url');
+  const token = `${dataStr}.${signature}`;
+
   const sess: AuthSession = {
     userId: user.id,
     email: user.email,
@@ -113,6 +124,50 @@ function createSession(user: User): string {
   return token;
 }
 
+function verifySessionToken(token: string): AuthSession | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length === 2) {
+      const [dataStr, signature] = parts;
+      const expectedSig = crypto.createHmac('sha256', SESSION_SECRET).update(dataStr).digest('base64url');
+      if (crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) {
+        const payload = JSON.parse(Buffer.from(dataStr, 'base64url').toString('utf-8'));
+        const SESSION_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days TTL
+        if (Date.now() - payload.createdAt < SESSION_TTL) {
+          return {
+            userId: payload.userId,
+            email: payload.email,
+            role: payload.role,
+            lastActive: Date.now()
+          };
+        }
+      }
+    }
+  } catch {
+    // continue to fallbacks
+  }
+
+  const memSession = activeSessions.get(token);
+  if (memSession) return memSession;
+
+  try {
+    const storedSessions = getPersistedSessions();
+    const found = storedSessions.find(s => s.token === token);
+    if (found) {
+      return {
+        userId: found.userId,
+        email: found.email,
+        role: found.role,
+        lastActive: found.lastActive
+      };
+    }
+  } catch {
+    // fallback ignore
+  }
+
+  return null;
+}
+
 function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -121,24 +176,14 @@ function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   }
 
   const token = authHeader.split(' ')[1];
-  const session = activeSessions.get(token);
+  const session = verifySessionToken(token);
 
   if (!session) {
     res.status(401).json({ error: 'Session expired or invalid. Please log in again.' });
     return;
   }
 
-  // Sliding Session Renewal (24 hour TTL, auto-refreshes on user activity)
-  const SESSION_TTL = 24 * 60 * 60 * 1000;
-  if (Date.now() - session.lastActive > SESSION_TTL) {
-    activeSessions.delete(token);
-    deleteSessionRecord(token);
-    res.status(401).json({ error: 'Session expired or invalid. Please log in again.' });
-    return;
-  }
-
   session.lastActive = Date.now();
-  saveSessionRecord({ token, ...session });
   (req as any).user = session;
   next();
 }
