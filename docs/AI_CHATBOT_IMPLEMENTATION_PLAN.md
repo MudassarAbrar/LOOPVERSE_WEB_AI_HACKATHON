@@ -308,5 +308,5 @@ export async function POST(req: Request) {
 - Build UI widget with quick-click suggestion chips:
   - *"What exam branches are available?"*
   - *"Show available slots for CS101"*
-  - *"Check seat capacity for my slots"*
+  - *"Check remaining seat capacity for slots"*
   - *"Are my assigned courses complete?"*

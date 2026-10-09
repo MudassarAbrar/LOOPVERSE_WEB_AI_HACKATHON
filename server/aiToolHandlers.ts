@@ -6,6 +6,7 @@ export async function executeAiTool(name: string, args: any) {
     switch (name) {
       case 'getAvailableBranches': {
         try {
+          if (!supabaseAdmin) throw new Error('Supabase not configured');
           const { data, error } = await supabaseAdmin
             .from('branches')
             .select('code, name, city, address, contact_number')
@@ -32,6 +33,7 @@ export async function executeAiTool(name: string, args: any) {
       case 'getCourseSlots': {
         const courseCodeStr = (args.courseCode || '').toUpperCase().trim();
         try {
+          if (!supabaseAdmin) throw new Error('Supabase not configured');
           const { data: course, error: courseError } = await supabaseAdmin
             .from('courses')
             .select('id, course_code, title')
@@ -71,6 +73,7 @@ export async function executeAiTool(name: string, args: any) {
       case 'checkSlotSeats': {
         const slotIdStr = args.slotId;
         try {
+          if (!supabaseAdmin) throw new Error('Supabase not configured');
           const { data: slot, error: slotError } = await supabaseAdmin
             .from('exam_slots')
             .select('id, capacity')

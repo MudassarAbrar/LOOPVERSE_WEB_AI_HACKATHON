@@ -2,6 +2,11 @@ import bcrypt from 'bcryptjs';
 import { supabaseAdmin } from './supabase.ts';
 
 export async function seedSupabase() {
+  if (!supabaseAdmin) {
+    console.warn('[SUPABASE SEED SKIPPED] Supabase admin client is not configured.');
+    return { success: false, error: 'Supabase admin client not configured' };
+  }
+
   console.log('[SUPABASE SEED] Starting Supabase database seeding...');
 
   try {
@@ -10,7 +15,7 @@ export async function seedSupabase() {
     const studentSalt = await bcrypt.genSalt(10);
     const studentHash = await bcrypt.hash('Student@123', studentSalt);
 
-    // 1. Seed Users
+    // 1. Seed Users (Only insert if email is absent to preserve existing credentials)
     const users = [
       {
         id: '00000000-0000-0000-0000-000000000001',
@@ -33,7 +38,22 @@ export async function seedSupabase() {
     ];
 
     for (const u of users) {
-      await supabaseAdmin.from('users').upsert(u, { onConflict: 'email' });
+      const { data: existingUser, error: checkErr } = await supabaseAdmin
+        .from('users')
+        .select('id')
+        .eq('email', u.email)
+        .maybeSingle();
+
+      if (checkErr) {
+        throw new Error(`Failed checking user ${u.email}: ${checkErr.message}`);
+      }
+
+      if (!existingUser) {
+        const { error: insErr } = await supabaseAdmin.from('users').insert(u);
+        if (insErr) {
+          throw new Error(`Failed inserting user ${u.email}: ${insErr.message}`);
+        }
+      }
     }
 
     // 2. Seed Branches
@@ -68,7 +88,10 @@ export async function seedSupabase() {
     ];
 
     for (const b of branches) {
-      await supabaseAdmin.from('branches').upsert(b, { onConflict: 'code' });
+      const { error: branchErr } = await supabaseAdmin.from('branches').upsert(b, { onConflict: 'code' });
+      if (branchErr) {
+        throw new Error(`Failed seeding branch ${b.code}: ${branchErr.message}`);
+      }
     }
 
     // 3. Seed Courses
@@ -140,10 +163,13 @@ export async function seedSupabase() {
     ];
 
     for (const c of courses) {
-      await supabaseAdmin.from('courses').upsert(c, { onConflict: 'course_code' });
+      const { error: courseErr } = await supabaseAdmin.from('courses').upsert(c, { onConflict: 'course_code' });
+      if (courseErr) {
+        throw new Error(`Failed seeding course ${c.course_code}: ${courseErr.message}`);
+      }
     }
 
-    // 4. Seed Student Profiles
+    // 4. Seed Student Profiles (Only insert if reg_number absent to preserve workflow state)
     const students = [
       {
         id: 's1000000-0000-0000-0000-000000000001',
@@ -200,7 +226,22 @@ export async function seedSupabase() {
     ];
 
     for (const st of students) {
-      await supabaseAdmin.from('student_profiles').upsert(st, { onConflict: 'reg_number' });
+      const { data: existingStudent, error: checkStErr } = await supabaseAdmin
+        .from('student_profiles')
+        .select('id')
+        .eq('reg_number', st.reg_number)
+        .maybeSingle();
+
+      if (checkStErr) {
+        throw new Error(`Failed checking student profile ${st.reg_number}: ${checkStErr.message}`);
+      }
+
+      if (!existingStudent) {
+        const { error: insStErr } = await supabaseAdmin.from('student_profiles').insert(st);
+        if (insStErr) {
+          throw new Error(`Failed inserting student profile ${st.reg_number}: ${insStErr.message}`);
+        }
+      }
     }
 
     // 5. Seed Student Assignments (4-6 per student)
@@ -216,10 +257,13 @@ export async function seedSupabase() {
     ];
 
     for (const a of assignments) {
-      await supabaseAdmin.from('student_course_assignments').upsert(a, { onConflict: 'student_id,course_id' });
+      const { error: assignErr } = await supabaseAdmin.from('student_course_assignments').upsert(a, { onConflict: 'student_id,course_id' });
+      if (assignErr) {
+        throw new Error(`Failed seeding assignment ${a.student_id}-${a.course_id}: ${assignErr.message}`);
+      }
     }
 
-    // 6. Seed Exam Slots
+    // 6. Seed Exam Slots (Ensuring all assigned courses have selectable slots)
     const slots = [
       {
         course_id: 'c1010000-0000-0000-0000-000000000001',
@@ -255,17 +299,34 @@ export async function seedSupabase() {
         start_time: '14:00:00',
         end_time: '17:00:00',
         capacity: 50
+      },
+      {
+        course_id: 'c1050000-0000-0000-0000-000000000005', // SE101
+        exam_date: '2026-11-16',
+        start_time: '09:00:00',
+        end_time: '12:00:00',
+        capacity: 50
+      },
+      {
+        course_id: 'c1060000-0000-0000-0000-000000000006', // MATH101
+        exam_date: '2026-11-17',
+        start_time: '14:00:00',
+        end_time: '17:00:00',
+        capacity: 50
       }
     ];
 
     for (const sl of slots) {
-      await supabaseAdmin.from('exam_slots').upsert(sl, { onConflict: 'course_id,exam_date,start_time' });
+      const { error: slotErr } = await supabaseAdmin.from('exam_slots').upsert(sl, { onConflict: 'course_id,exam_date,start_time' });
+      if (slotErr) {
+        throw new Error(`Failed seeding slot for course ${sl.course_id}: ${slotErr.message}`);
+      }
     }
 
     console.log('[SUPABASE SEED] Database successfully populated with initial data!');
     return { success: true };
-  } catch (err) {
-    console.error('[SUPABASE SEED ERROR]', err);
-    return { success: false, error: err };
+  } catch (err: any) {
+    console.error('[SUPABASE SEED ERROR]', err?.message || err);
+    return { success: false, error: err?.message || err };
   }
 }

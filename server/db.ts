@@ -52,8 +52,8 @@ export async function initDb(): Promise<void> {
         Array.isArray(db.courses) &&
         Array.isArray(db.students)
       ) {
-        // Sync Supabase in background
-        seedSupabase().catch(err => console.error('[SUPABASE SYNC WARNING]', err));
+        // Sync loaded db object to Supabase in background
+        syncLoadedDbToSupabase(db).catch(err => console.error('[SUPABASE SYNC WARNING]', err));
         return;
       }
     } catch {
@@ -652,6 +652,7 @@ export function getDb(): DatabaseSchema {
 
 // Asynchronously sync mutations to Supabase in background
 export function syncRecordToSupabase(table: string, record: any): void {
+  if (!supabaseAdmin) return;
   Promise.resolve(supabaseAdmin.from(table).upsert(record))
     .then((res: any) => {
       if (res.error) {
@@ -663,6 +664,72 @@ export function syncRecordToSupabase(table: string, record: any): void {
     .catch((err: any) => {
       console.warn(`[SUPABASE ASYNC SYNC ERROR] ${table}:`, err);
     });
+}
+
+export async function syncLoadedDbToSupabase(data: DatabaseSchema): Promise<void> {
+  if (!supabaseAdmin) return;
+  try {
+    for (const u of data.users) {
+      await supabaseAdmin.from('users').upsert({
+        id: u.id,
+        email: u.email,
+        password_hash: u.passwordHash,
+        role: u.role
+      }, { onConflict: 'email' });
+    }
+    for (const b of data.branches) {
+      await supabaseAdmin.from('branches').upsert({
+        id: b.id,
+        code: b.code,
+        name: b.name,
+        city: b.city,
+        address: b.address,
+        contact_number: b.contactNumber,
+        status: b.status
+      }, { onConflict: 'code' });
+    }
+    for (const c of data.courses) {
+      await supabaseAdmin.from('courses').upsert({
+        id: c.id,
+        course_code: c.code,
+        title: c.title,
+        credit_hours: c.creditHours,
+        department: c.department,
+        status: c.status
+      }, { onConflict: 'course_code' });
+    }
+    for (const s of data.students) {
+      await supabaseAdmin.from('student_profiles').upsert({
+        id: s.id,
+        user_id: s.userId,
+        full_name: s.fullName,
+        phone: s.phone,
+        cnic: s.cnic,
+        dob: s.dob,
+        gender: s.gender,
+        address: s.address,
+        father_name: s.fatherName,
+        parent_cnic: s.parentCnic,
+        parent_occupation: s.parentOccupation,
+        parent_phone: s.parentPhone,
+        emergency_contact: s.emergencyContact,
+        reg_number: s.regNumber,
+        program: s.program,
+        semester: s.semester,
+        session_batch: s.sessionBatch,
+        prev_qual: s.prevQual,
+        prev_institute: s.prevInstitute,
+        cgpa: s.cgpa,
+        branch_id: s.branchId,
+        is_branch_selected: s.isBranchSelected,
+        is_datesheet_saved: s.isDateSheetSaved,
+        branch_unlocked: s.branchUnlocked,
+        datesheet_unlocked: s.dateSheetUnlocked
+      }, { onConflict: 'reg_number' });
+    }
+  } catch (err) {
+    console.warn('[SUPABASE DB SYNC WARNING]', err);
+  }
 }
 
 // Audit Logger Helper (Bonus Feature)
@@ -678,12 +745,14 @@ export function logAudit(adminEmail: string, action: string, target: string, det
   db.auditLogs.unshift(log);
   if (db.auditLogs.length > 200) db.auditLogs.pop();
   saveDb();
+
+  const adminUser = db.users.find(u => u.email.toLowerCase() === adminEmail.toLowerCase());
   syncRecordToSupabase('audit_logs', {
     id: log.id,
-    admin_id: null,
+    admin_id: adminUser ? adminUser.id : null,
     action: log.action,
     target_resource: log.target,
-    details: log.details ? { info: log.details } : null,
+    details: { adminEmail, info: log.details || null },
     timestamp: log.timestamp
   });
 }

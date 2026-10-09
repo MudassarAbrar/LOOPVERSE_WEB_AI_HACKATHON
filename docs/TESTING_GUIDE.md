@@ -85,7 +85,7 @@ This document provides a systematic testing suite for **ExamSlot**, structured s
 ### TC-STU-01: Email Token Password Onboarding (10 Marks)
 - **Step 1**: Click onboarding link from email `/set-password?token=XYZ`.
 - **Step 2**: Enter new password (minimum 8 chars) and submit.
-- **Expected Outcome**: Password hashed via bcrypt, token marked `is_used = true`. Clicking link a 2nd time displays "Token Expired / Invalid".
+- **Expected Outcome**: Password hashed via bcrypt or Argon2 (stored password is never plaintext), token marked `is_used = true`. Clicking link a 2nd time displays "Token Expired / Invalid".
 
 ### TC-STU-02: One-Time Branch Selection (8 Marks)
 - **Step 1**: Log in as student for the first time. Branch selection page appears.

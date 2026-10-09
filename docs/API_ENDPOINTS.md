@@ -6,7 +6,7 @@
 ## 1. Global API Standards
 
 ### 1.1 Base URL & Content Negotiation
-- Base API Endpoint: `/api/v1`
+- Base API Endpoint: `/api`
 - Content Type: `application/json`
 - Character Set: `UTF-8`
 
