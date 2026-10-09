@@ -34,22 +34,26 @@ interface DatabaseSchema {
 
 let db: DatabaseSchema;
 
+import { seedSupabase } from './seed_supabase.ts';
+
 export async function initDb(): Promise<void> {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
 
+  // Always seed or verify database
   if (fs.existsSync(DB_FILE)) {
     try {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       db = JSON.parse(content);
-      // Validate schema has all arrays
       if (
         Array.isArray(db.users) &&
         Array.isArray(db.branches) &&
         Array.isArray(db.courses) &&
         Array.isArray(db.students)
       ) {
+        // Sync Supabase in background
+        seedSupabase().catch(err => console.error('[SUPABASE SYNC WARNING]', err));
         return;
       }
     } catch {
@@ -57,8 +61,9 @@ export async function initDb(): Promise<void> {
     }
   }
 
-  // Seed Initial Database
+  // Seed Initial Database both locally and on Supabase
   await seedDb();
+  await seedSupabase().catch(err => console.error('[SUPABASE SEED ERROR]', err));
 }
 
 export function saveDb(): void {
@@ -637,10 +642,25 @@ export async function seedDb(): Promise<void> {
   saveDb();
 }
 
-// ----------------- DATABASE HELPERS -----------------
+import { supabaseAdmin } from './supabase.ts';
+
+// ----------------- RESILIENT DATABASE & CACHE HELPERS -----------------
 
 export function getDb(): DatabaseSchema {
   return db;
+}
+
+// Asynchronously sync mutations to Supabase in background
+export function syncRecordToSupabase(table: string, record: any): void {
+  supabaseAdmin.from(table).upsert(record).then(({ error }) => {
+    if (error) {
+      console.warn(`[SUPABASE ASYNC SYNC WARNING] Failed to sync ${table}:`, error.message);
+    } else {
+      console.log(`[SUPABASE ASYNC SYNC SUCCESS] Synced ${table} record`);
+    }
+  }).catch(err => {
+    console.warn(`[SUPABASE ASYNC SYNC ERROR] ${table}:`, err);
+  });
 }
 
 // Audit Logger Helper (Bonus Feature)
@@ -656,9 +676,15 @@ export function logAudit(adminEmail: string, action: string, target: string, det
   db.auditLogs.unshift(log);
   if (db.auditLogs.length > 200) db.auditLogs.pop();
   saveDb();
+  syncRecordToSupabase('audit_logs', {
+    id: log.id,
+    admin_id: null,
+    action: log.action,
+    target_resource: log.target,
+    details: log.details ? { info: log.details } : null,
+    timestamp: log.timestamp
+  });
 }
-
-// Server-Side Search and Pagination Helper
 export function paginate<T>(
   items: T[],
   page: number = 1,
